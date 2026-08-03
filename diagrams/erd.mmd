@@ -4,8 +4,8 @@ erDiagram
     USERS |o--o{ ORDERS : "places"
     USERS ||--o{ REVIEWS : "writes"
     USERS |o--|o CARTS : "owns"
-    USERS ||--o{ AUDIT_LOGS : "performs"
-    USERS ||--o{ ORDER_LOGS : "performs"
+    USERS |o--o{ AUDIT_LOGS : "performs"
+    USERS |o--o{ ORDER_LOGS : "performs"
 
     %% --- CATALOG DOMAIN ---
     CATEGORIES |o--o{ CATEGORIES : "parent of"
@@ -18,7 +18,6 @@ erDiagram
     %% --- INVENTORY DOMAIN ---
     PRODUCT_VARIANTS ||--o| INVENTORY : "has stock"
     INVENTORY ||--o{ INVENTORY_LOGS : "logs changes"
-    INVENTORY ||--o{ INVENTORY_RESERVATIONS : "tracks"
 
     %% --- CART DOMAIN ---
     CARTS ||--o{ CART_ITEMS : "contains"
@@ -28,7 +27,6 @@ erDiagram
     ORDERS ||--|{ ORDER_ITEMS : "contains"
     ORDERS ||--o{ ORDER_LOGS : "tracks"
     ORDERS ||--o{ REVIEWS : "verified purchase"
-    ORDERS ||--o{ INVENTORY_RESERVATIONS : "creates"
     PRODUCT_VARIANTS ||--o{ ORDER_ITEMS : "sold in"
 
     %% --- ENTITY DEFINITIONS ---
@@ -55,7 +53,6 @@ erDiagram
         string status "DRAFT, ACTIVE, INACTIVE"
         bigint category_id FK
         boolean is_deleted
-        tsvector search_vector "generated from name & description for full-text search"
         timestamp created_at
         timestamp updated_at
     }
@@ -65,7 +62,7 @@ erDiagram
         uuid uuid UK
         string name
         text description
-        bigint parent_id FK
+        bigint parent_id FK "nullable"
         timestamp created_at
         timestamp updated_at
     }
@@ -94,22 +91,10 @@ erDiagram
 
     INVENTORY {
         bigint id PK
-        uuid uuid UK
         bigint variant_id FK
         int total_quantity
         int low_stock_threshold
         timestamp last_updated
-        timestamp created_at
-    }
-
-    INVENTORY_RESERVATIONS {
-        bigint id PK
-        bigint inventory_id FK
-        bigint order_id FK
-        bigint variant_id FK
-        int quantity
-        string status "ACTIVE, EXPIRED, FULFILLED, CANCELLED"
-        timestamp expires_at
         timestamp created_at
     }
 
@@ -126,7 +111,7 @@ erDiagram
     CARTS {
         bigint id PK
         uuid uuid UK
-        bigint user_id FK "nullable"
+        bigint user_id FK "unique,nullable"
         string session_id UK "nullable"
         timestamp created_at
         timestamp updated_at
@@ -174,6 +159,7 @@ erDiagram
         decimal unit_price "Snapshot"
         int quantity
         decimal total_price "Snapshot"
+        timestamp updated_at
         timestamp created_at
     }
 
@@ -183,7 +169,8 @@ erDiagram
         string from_status "nullable"
         string to_status
         string reason "nullable for cancellations"
-        bigint performed_by FK "from USERs"
+        AuditActorType performed_by_type "USER, SYSTEM, null for unknown"
+        bigint performed_by FK "nullable for unknown"
         timestamp created_at
     }
 
@@ -226,7 +213,13 @@ erDiagram
         string entity_type
         bigint entity_id
         string action
-        bigint performed_by FK "from USERS"
+        bigint performed_by FK "nullable for unknown"
+        AuditActorType performed_by_type "USER, SYSTEM, null for unknown"
         jsonb changes "PostgreSQL JSONB"
         timestamp created_at
+    }
+
+    enum AuditActorType {
+        USER
+        SYSTEM
     }
