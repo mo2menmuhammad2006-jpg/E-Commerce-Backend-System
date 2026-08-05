@@ -160,7 +160,6 @@ erDiagram
         decimal unit_price "Snapshot"
         int quantity
         decimal total_price "Snapshot"
-        timestamp updated_at
         timestamp created_at
     }
 
@@ -169,7 +168,7 @@ erDiagram
         bigint order_id FK
         string from_status "nullable"
         string to_status
-        string reason "nullable for cancellations"
+        string reason 
         string performed_by_type "USER, GUEST, SYSTEM"
         bigint performed_by FK "nullable: NULL = GUEST or SYSTEM"
         timestamp created_at
