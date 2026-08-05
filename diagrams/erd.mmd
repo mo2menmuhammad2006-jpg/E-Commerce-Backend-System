@@ -80,6 +80,7 @@ erDiagram
 
     PRODUCT_VARIANTS {
         bigint id PK
+        uuid uuid UK
         bigint product_id FK
         string sku UK
         decimal price
@@ -169,8 +170,8 @@ erDiagram
         string from_status "nullable"
         string to_status
         string reason "nullable for cancellations"
-        AuditActorType performed_by_type "USER, SYSTEM, null for unknown"
-        bigint performed_by FK "nullable for unknown"
+        string performed_by_type "USER, GUEST, SYSTEM"
+        bigint performed_by FK "nullable: NULL = GUEST or SYSTEM"
         timestamp created_at
     }
 
@@ -213,13 +214,9 @@ erDiagram
         string entity_type
         bigint entity_id
         string action
-        bigint performed_by FK "nullable for unknown"
-        AuditActorType performed_by_type "USER, SYSTEM, null for unknown"
+        bigint performed_by FK "nullable: NULL = SYSTEM"
+        string performed_by_type "USER, SYSTEM"
         jsonb changes "PostgreSQL JSONB"
         timestamp created_at
     }
 
-    enum AuditActorType {
-        USER
-        SYSTEM
-    }
