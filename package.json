@@ -1,11 +1,46 @@
 {
+  
   "dependencies": {
-    "@prisma/adapter-pg": "^7.9.1",
-    "@prisma/client": "^7.9.1",
-    "dotenv": "^17.4.2",
-    "pg": "^8.22.0"
+  
+    
+  "@prisma/adapter-pg": "^7.9.1",
+  
+    
+  "@prisma/client": "^7.9.1",
+  
+    
+  "dotenv": "^17.4.2",
+  
+    
+  "pg": "^8.22.0"
+  
   },
+  
   "devDependencies": {
-    "prisma": "^7.9.1"
-  }
+  
+    
+  "nodemon": "^3.1.14",
+  
+    
+  "prisma": "^7.9.1"
+  
+  },
+  
+  "name": "ecommerce",
+  
+  "version": "1.0.0",
+  
+  "description": "Version 3.0",
+    
+  
+  "scripts": {
+  
+    
+  "test": "echo \"Error: no test specified\" && exit 1"
+  
+  },
+  
+  "license": "ISC",
+  
+  "type": "module"
 }

@@ -4,9 +4,333 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
+  //output   = "../src/generated"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
+
+
+
+
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  INACTIVE
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum OrderLogActorType {
+  USER
+  GUEST
+  SYSTEM
+}
+
+enum AuditActorType {
+  USER
+  SYSTEM
+}
+
+enum InventoryOperation {
+  SET
+  INCREMENT
+  DECREMENT
+}
+
+model User {
+  id            BigInt   @id @default(autoincrement())
+  uuid          String   @unique @default(uuid())
+  email         String   @unique
+  password_hash String
+  first_name    String
+  last_name     String
+  phone         String?
+  role          UserRole @default(CUSTOMER)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  carts      Cart[]
+  orders     Order[]
+  reviews    Review[]
+  audit_logs AuditLog[] @relation("AuditLogPerformedBy")
+  order_logs OrderLog[] @relation("OrderLogPerformedBy")
+}
+
+model Category {
+  id          BigInt   @id @default(autoincrement())
+  uuid        String   @unique @default(uuid())
+  name        String
+  description String
+  parent_id   BigInt?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  parent   Category?  @relation("CategoryTree", fields: [parent_id], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryTree")
+  products Product[]
+
+  @@unique([parent_id, name])
+}
+
+model Product {
+  id          BigInt        @id @default(autoincrement())
+  uuid        String        @unique @default(uuid())
+  name        String
+  description String
+  status      ProductStatus @default(DRAFT)
+  category_id BigInt
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+
+  category Category         @relation(fields: [category_id], references: [id])
+  images   ProductImage[]
+  variants ProductVariant[]
+  reviews  Review[]
+
+  @@index([category_id])
+  @@index([status, created_at])
+}
+
+model ProductImage {
+  id            BigInt   @id @default(autoincrement())
+  product_id    BigInt
+  url           String
+  alt_text      String
+  display_order Int      @default(0)
+  is_primary    Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  product Product @relation(fields: [product_id], references: [id])
+
+  @@index([product_id])
+}
+
+model ProductVariant {
+  id         BigInt   @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  product_id BigInt
+  sku        String   @unique
+  price      Decimal  @db.Decimal(10, 2)
+  attributes Json
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  product    Product         @relation(fields: [product_id], references: [id])
+  cart_items CartItem[]
+  order_items OrderItem[]
+  inventory  Inventory?
+  price_logs PriceLog[]
+
+  @@index([product_id])
+}
+
+model Inventory {
+  id                  BigInt   @id @default(autoincrement())
+  variant_id          BigInt   @unique
+  total_quantity      Int
+  low_stock_threshold Int      @default(0)
+  last_updated        DateTime @updatedAt
+  created_at          DateTime @default(now())
+
+  variant        ProductVariant  @relation(fields: [variant_id], references: [id])
+  inventory_logs InventoryLog[]
+}
+
+model InventoryLog {
+  id                BigInt             @id @default(autoincrement())
+  inventory_id      BigInt
+  operation_type    InventoryOperation
+  previous_quantity Int
+  new_quantity      Int
+  reason            String
+  created_at        DateTime           @default(now())
+
+  inventory Inventory @relation(fields: [inventory_id], references: [id])
+
+  @@index([inventory_id, created_at])
+}
+
+model Cart {
+  id         BigInt   @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  user_id    BigInt?  @unique
+  session_id String?  @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user  User?      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  items CartItem[]
+}
+
+model CartItem {
+  id                BigInt  @id @default(autoincrement())
+  cart_id           BigInt
+  variant_id        BigInt
+  quantity          Int
+  price_at_addition Decimal @db.Decimal(10, 2)
+  added_at          DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  cart    Cart           @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variant_id], references: [id])
+
+  @@unique([cart_id, variant_id])
+  @@index([variant_id])
+}
+
+model Order {
+  id                    BigInt      @id @default(autoincrement())
+  uuid                  String      @unique @default(uuid())
+  order_number          String      @unique
+  user_id               BigInt?
+  status                OrderStatus @default(PENDING)
+  customer_name         String
+  customer_email        String
+  customer_phone        String
+  shipping_full_name    String
+  shipping_street       String
+  shipping_city         String
+  shipping_state        String
+  shipping_postal_code  String
+  shipping_country_code String
+  subtotal              Decimal     @db.Decimal(12, 2)
+  shipping_cost         Decimal     @db.Decimal(12, 2)
+  tax_amount            Decimal     @db.Decimal(12, 2)
+  total_amount          Decimal     @db.Decimal(12, 2)
+  created_at            DateTime    @default(now())
+  updated_at            DateTime    @updatedAt
+
+  user    User?        @relation(fields: [user_id], references: [id], onDelete: Restrict)
+  items   OrderItem[]
+  logs    OrderLog[]
+  reviews Review[]
+
+  @@index([user_id])
+  @@index([status, created_at])
+  @@index([total_amount])
+}
+
+model OrderItem {
+  id                 BigInt  @id @default(autoincrement())
+  order_id           BigInt
+  variant_id         BigInt
+  product_name       String
+  variant_attributes Json
+  unit_price         Decimal @db.Decimal(10, 2)
+  quantity           Int
+  total_price        Decimal @db.Decimal(12, 2)
+  created_at         DateTime @default(now())
+
+  order   Order          @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variant_id], references: [id])
+
+  @@index([order_id])
+  @@index([variant_id])
+}
+
+model OrderLog {
+  id                BigInt      @id @default(autoincrement())
+  order_id          BigInt
+  from_status       OrderStatus?
+  to_status         OrderStatus
+  reason            String
+  performed_by_type OrderLogActorType
+  performed_by      BigInt?
+  created_at        DateTime    @default(now())
+
+  order             Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  performed_by_user User? @relation("OrderLogPerformedBy", fields: [performed_by], references: [id], onDelete: Restrict)
+
+  @@index([order_id])
+}
+
+model Review {
+  id               BigInt       @id @default(autoincrement())
+  uuid             String       @unique @default(uuid())
+  user_id          BigInt
+  product_id       BigInt
+  order_id         BigInt
+  rating           Int
+  title            String
+  body             String
+  status           ReviewStatus @default(PENDING)
+  moderation_notes String?
+  moderated_at     DateTime?
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+
+  user    User    @relation(fields: [user_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
+  order   Order   @relation(fields: [order_id], references: [id])
+
+  @@unique([order_id, product_id])
+  @@index([product_id, status, created_at])
+  @@index([user_id])
+  @@index([status, created_at])
+}
+
+model PriceLog {
+  id         BigInt  @id @default(autoincrement())
+  variant_id BigInt
+  old_price  Decimal @db.Decimal(10, 2)
+  new_price  Decimal @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+
+  variant ProductVariant @relation(fields: [variant_id], references: [id])
+
+  @@index([variant_id, created_at])
+}
+
+model StoreSettings {
+  id                     BigInt  @id @default(1)
+  base_currency          String
+  currency_symbol        String
+  flat_rate_shipping     Decimal @db.Decimal(10, 2)
+  free_shipping_threshold Decimal @db.Decimal(12, 2)
+  tax_rate_percent       Decimal @db.Decimal(5, 2)
+  updated_at             DateTime @updatedAt
+}
+
+model AuditLog {
+  id                BigInt    @id @default(autoincrement())
+  entity_type       String
+  entity_id         BigInt
+  action            String
+  performed_by_type AuditActorType
+  performed_by      BigInt?
+  changes           Json
+  created_at        DateTime  @default(now())
+
+  performed_by_user User? @relation("AuditLogPerformedBy", fields: [performed_by], references: [id], onDelete: Restrict)
+
+  @@index([entity_type, entity_id])
+  @@index([created_at])
+
+}
+
