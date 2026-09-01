@@ -21,8 +21,7 @@ CREATE TYPE "InventoryOperation" AS ENUM ('SET', 'INCREMENT', 'DECREMENT');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "email" TEXT NOT NULL,
     "password_hash" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
@@ -38,11 +37,10 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Category" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "parent_id" BIGINT,
+    "parent_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -51,12 +49,11 @@ CREATE TABLE "Category" (
 
 -- CreateTable
 CREATE TABLE "Product" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "status" "ProductStatus" NOT NULL DEFAULT 'DRAFT',
-    "category_id" BIGINT NOT NULL,
+    "category_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -65,8 +62,8 @@ CREATE TABLE "Product" (
 
 -- CreateTable
 CREATE TABLE "ProductImage" (
-    "id" BIGSERIAL NOT NULL,
-    "product_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "product_id" UUID NOT NULL,
     "url" TEXT NOT NULL,
     "alt_text" TEXT NOT NULL,
     "display_order" INTEGER NOT NULL DEFAULT 0,
@@ -79,9 +76,8 @@ CREATE TABLE "ProductImage" (
 
 -- CreateTable
 CREATE TABLE "ProductVariant" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
-    "product_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "product_id" UUID NOT NULL,
     "sku" TEXT NOT NULL,
     "price" DECIMAL(10,2) NOT NULL,
     "attributes" JSONB NOT NULL,
@@ -94,8 +90,8 @@ CREATE TABLE "ProductVariant" (
 
 -- CreateTable
 CREATE TABLE "Inventory" (
-    "id" BIGSERIAL NOT NULL,
-    "variant_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "variant_id" UUID NOT NULL,
     "total_quantity" INTEGER NOT NULL,
     "low_stock_threshold" INTEGER NOT NULL DEFAULT 0,
     "last_updated" TIMESTAMP(3) NOT NULL,
@@ -106,8 +102,8 @@ CREATE TABLE "Inventory" (
 
 -- CreateTable
 CREATE TABLE "InventoryLog" (
-    "id" BIGSERIAL NOT NULL,
-    "inventory_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "inventory_id" UUID NOT NULL,
     "operation_type" "InventoryOperation" NOT NULL,
     "previous_quantity" INTEGER NOT NULL,
     "new_quantity" INTEGER NOT NULL,
@@ -119,9 +115,8 @@ CREATE TABLE "InventoryLog" (
 
 -- CreateTable
 CREATE TABLE "Cart" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
-    "user_id" BIGINT,
+    "id" UUID NOT NULL,
+    "user_id" UUID,
     "session_id" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -131,9 +126,9 @@ CREATE TABLE "Cart" (
 
 -- CreateTable
 CREATE TABLE "CartItem" (
-    "id" BIGSERIAL NOT NULL,
-    "cart_id" BIGINT NOT NULL,
-    "variant_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "cart_id" UUID NOT NULL,
+    "variant_id" UUID NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price_at_addition" DECIMAL(10,2) NOT NULL,
     "added_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -144,10 +139,9 @@ CREATE TABLE "CartItem" (
 
 -- CreateTable
 CREATE TABLE "Order" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
+    "id" UUID NOT NULL,
     "order_number" TEXT NOT NULL,
-    "user_id" BIGINT,
+    "user_id" UUID,
     "status" "OrderStatus" NOT NULL DEFAULT 'PENDING',
     "customer_name" TEXT NOT NULL,
     "customer_email" TEXT NOT NULL,
@@ -170,9 +164,9 @@ CREATE TABLE "Order" (
 
 -- CreateTable
 CREATE TABLE "OrderItem" (
-    "id" BIGSERIAL NOT NULL,
-    "order_id" BIGINT NOT NULL,
-    "variant_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "order_id" UUID NOT NULL,
+    "variant_id" UUID NOT NULL,
     "product_name" TEXT NOT NULL,
     "variant_attributes" JSONB NOT NULL,
     "unit_price" DECIMAL(10,2) NOT NULL,
@@ -185,13 +179,13 @@ CREATE TABLE "OrderItem" (
 
 -- CreateTable
 CREATE TABLE "OrderLog" (
-    "id" BIGSERIAL NOT NULL,
-    "order_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "order_id" UUID NOT NULL,
     "from_status" "OrderStatus",
     "to_status" "OrderStatus" NOT NULL,
     "reason" TEXT NOT NULL,
     "performed_by_type" "OrderLogActorType" NOT NULL,
-    "performed_by" BIGINT,
+    "performed_by" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "OrderLog_pkey" PRIMARY KEY ("id")
@@ -199,11 +193,10 @@ CREATE TABLE "OrderLog" (
 
 -- CreateTable
 CREATE TABLE "Review" (
-    "id" BIGSERIAL NOT NULL,
-    "uuid" TEXT NOT NULL,
-    "user_id" BIGINT NOT NULL,
-    "product_id" BIGINT NOT NULL,
-    "order_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "user_id" UUID NOT NULL,
+    "product_id" UUID NOT NULL,
+    "order_id" UUID NOT NULL,
     "rating" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
     "body" TEXT NOT NULL,
@@ -218,8 +211,8 @@ CREATE TABLE "Review" (
 
 -- CreateTable
 CREATE TABLE "PriceLog" (
-    "id" BIGSERIAL NOT NULL,
-    "variant_id" BIGINT NOT NULL,
+    "id" UUID NOT NULL,
+    "variant_id" UUID NOT NULL,
     "old_price" DECIMAL(10,2) NOT NULL,
     "new_price" DECIMAL(10,2) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -242,12 +235,12 @@ CREATE TABLE "StoreSettings" (
 
 -- CreateTable
 CREATE TABLE "AuditLog" (
-    "id" BIGSERIAL NOT NULL,
+    "id" UUID NOT NULL,
     "entity_type" TEXT NOT NULL,
-    "entity_id" BIGINT NOT NULL,
+    "entity_id" UUID NOT NULL,
     "action" TEXT NOT NULL,
     "performed_by_type" "AuditActorType" NOT NULL,
-    "performed_by" BIGINT,
+    "performed_by" UUID,
     "changes" JSONB NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -255,19 +248,10 @@ CREATE TABLE "AuditLog" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_uuid_key" ON "User"("uuid");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Category_uuid_key" ON "Category"("uuid");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Category_parent_id_name_key" ON "Category"("parent_id", "name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Product_uuid_key" ON "Product"("uuid");
 
 -- CreateIndex
 CREATE INDEX "Product_category_id_idx" ON "Product"("category_id");
@@ -277,9 +261,6 @@ CREATE INDEX "Product_status_created_at_idx" ON "Product"("status", "created_at"
 
 -- CreateIndex
 CREATE INDEX "ProductImage_product_id_idx" ON "ProductImage"("product_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ProductVariant_uuid_key" ON "ProductVariant"("uuid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ProductVariant_sku_key" ON "ProductVariant"("sku");
@@ -294,9 +275,6 @@ CREATE UNIQUE INDEX "Inventory_variant_id_key" ON "Inventory"("variant_id");
 CREATE INDEX "InventoryLog_inventory_id_created_at_idx" ON "InventoryLog"("inventory_id", "created_at");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Cart_uuid_key" ON "Cart"("uuid");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Cart_user_id_key" ON "Cart"("user_id");
 
 -- CreateIndex
@@ -307,9 +285,6 @@ CREATE INDEX "CartItem_variant_id_idx" ON "CartItem"("variant_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CartItem_cart_id_variant_id_key" ON "CartItem"("cart_id", "variant_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Order_uuid_key" ON "Order"("uuid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Order_order_number_key" ON "Order"("order_number");
@@ -331,9 +306,6 @@ CREATE INDEX "OrderItem_variant_id_idx" ON "OrderItem"("variant_id");
 
 -- CreateIndex
 CREATE INDEX "OrderLog_order_id_idx" ON "OrderLog"("order_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Review_uuid_key" ON "Review"("uuid");
 
 -- CreateIndex
 CREATE INDEX "Review_product_id_status_created_at_idx" ON "Review"("product_id", "status", "created_at");
@@ -418,6 +390,16 @@ ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_performed_by_fkey" FOREIGN KEY (
 
 
 
+
+
+
+
+
+
+
+
+
+
 -- users: email unique case-insensitive (docs only say "unique")
 CREATE UNIQUE INDEX users_email_ci_unique ON "User" (LOWER(email));
 
@@ -483,3 +465,4 @@ ALTER TABLE "StoreSettings" ADD CONSTRAINT store_settings_non_negative_check
   CHECK (flat_rate_shipping >= 0 AND free_shipping_threshold >= 0);
 
 ALTER TABLE "StoreSettings" ADD CONSTRAINT store_settings_singleton_check CHECK (id = 1);
+

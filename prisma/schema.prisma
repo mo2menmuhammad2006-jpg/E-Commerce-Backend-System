@@ -61,8 +61,7 @@ enum InventoryOperation {
 }
 
 model User {
-  id            BigInt   @id @default(autoincrement())
-  uuid          String   @unique @default(uuid())
+  id            String   @id @default(uuid()) @db.Uuid
   email         String   @unique
   password_hash String
   first_name    String
@@ -81,11 +80,10 @@ model User {
 }
 
 model Category {
-  id          BigInt   @id @default(autoincrement())
-  uuid        String   @unique @default(uuid())
+  id          String   @id @default(uuid()) @db.Uuid
   name        String
   description String
-  parent_id   BigInt?
+  parent_id   String?  @db.Uuid
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
@@ -97,12 +95,11 @@ model Category {
 }
 
 model Product {
-  id          BigInt        @id @default(autoincrement())
-  uuid        String        @unique @default(uuid())
+  id          String        @id @default(uuid()) @db.Uuid
   name        String
   description String
   status      ProductStatus @default(DRAFT)
-  category_id BigInt
+  category_id String        @db.Uuid
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
 
@@ -116,8 +113,8 @@ model Product {
 }
 
 model ProductImage {
-  id            BigInt   @id @default(autoincrement())
-  product_id    BigInt
+  id            String   @id @default(uuid()) @db.Uuid
+  product_id    String   @db.Uuid
   url           String
   alt_text      String
   display_order Int      @default(0)
@@ -131,9 +128,8 @@ model ProductImage {
 }
 
 model ProductVariant {
-  id         BigInt   @id @default(autoincrement())
-  uuid       String   @unique @default(uuid())
-  product_id BigInt
+  id         String   @id @default(uuid()) @db.Uuid
+  product_id String   @db.Uuid
   sku        String   @unique
   price      Decimal  @db.Decimal(10, 2)
   attributes Json
@@ -151,8 +147,8 @@ model ProductVariant {
 }
 
 model Inventory {
-  id                  BigInt   @id @default(autoincrement())
-  variant_id          BigInt   @unique
+  id                  String   @id @default(uuid()) @db.Uuid
+  variant_id          String   @db.Uuid @unique
   total_quantity      Int
   low_stock_threshold Int      @default(0)
   last_updated        DateTime @updatedAt
@@ -163,8 +159,8 @@ model Inventory {
 }
 
 model InventoryLog {
-  id                BigInt             @id @default(autoincrement())
-  inventory_id      BigInt
+  id                String             @id @default(uuid()) @db.Uuid
+  inventory_id      String             @db.Uuid
   operation_type    InventoryOperation
   previous_quantity Int
   new_quantity      Int
@@ -177,9 +173,8 @@ model InventoryLog {
 }
 
 model Cart {
-  id         BigInt   @id @default(autoincrement())
-  uuid       String   @unique @default(uuid())
-  user_id    BigInt?  @unique
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String?  @db.Uuid @unique
   session_id String?  @unique
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -189,9 +184,9 @@ model Cart {
 }
 
 model CartItem {
-  id                BigInt  @id @default(autoincrement())
-  cart_id           BigInt
-  variant_id        BigInt
+  id                String  @id @default(uuid()) @db.Uuid
+  cart_id           String  @db.Uuid
+  variant_id        String  @db.Uuid
   quantity          Int
   price_at_addition Decimal @db.Decimal(10, 2)
   added_at          DateTime @default(now())
@@ -205,10 +200,9 @@ model CartItem {
 }
 
 model Order {
-  id                    BigInt      @id @default(autoincrement())
-  uuid                  String      @unique @default(uuid())
+  id                    String      @id @default(uuid()) @db.Uuid
   order_number          String      @unique
-  user_id               BigInt?
+  user_id               String?     @db.Uuid
   status                OrderStatus @default(PENDING)
   customer_name         String
   customer_email        String
@@ -237,9 +231,9 @@ model Order {
 }
 
 model OrderItem {
-  id                 BigInt  @id @default(autoincrement())
-  order_id           BigInt
-  variant_id         BigInt
+  id                 String  @id @default(uuid()) @db.Uuid
+  order_id           String  @db.Uuid
+  variant_id         String  @db.Uuid
   product_name       String
   variant_attributes Json
   unit_price         Decimal @db.Decimal(10, 2)
@@ -255,13 +249,13 @@ model OrderItem {
 }
 
 model OrderLog {
-  id                BigInt      @id @default(autoincrement())
-  order_id          BigInt
+  id                String      @id @default(uuid()) @db.Uuid
+  order_id          String      @db.Uuid
   from_status       OrderStatus?
   to_status         OrderStatus
   reason            String
   performed_by_type OrderLogActorType
-  performed_by      BigInt?
+  performed_by      String?     @db.Uuid
   created_at        DateTime    @default(now())
 
   order             Order @relation(fields: [order_id], references: [id], onDelete: Cascade)
@@ -271,11 +265,10 @@ model OrderLog {
 }
 
 model Review {
-  id               BigInt       @id @default(autoincrement())
-  uuid             String       @unique @default(uuid())
-  user_id          BigInt
-  product_id       BigInt
-  order_id         BigInt
+  id               String       @id @default(uuid()) @db.Uuid
+  user_id          String       @db.Uuid
+  product_id       String       @db.Uuid
+  order_id         String       @db.Uuid
   rating           Int
   title            String
   body             String
@@ -296,8 +289,8 @@ model Review {
 }
 
 model PriceLog {
-  id         BigInt  @id @default(autoincrement())
-  variant_id BigInt
+  id         String  @id @default(uuid()) @db.Uuid
+  variant_id String  @db.Uuid
   old_price  Decimal @db.Decimal(10, 2)
   new_price  Decimal @db.Decimal(10, 2)
   created_at DateTime @default(now())
@@ -318,12 +311,12 @@ model StoreSettings {
 }
 
 model AuditLog {
-  id                BigInt    @id @default(autoincrement())
+  id                String    @id @default(uuid()) @db.Uuid
   entity_type       String
-  entity_id         BigInt
+  entity_id         String    @db.Uuid
   action            String
   performed_by_type AuditActorType
-  performed_by      BigInt?
+  performed_by      String?   @db.Uuid
   changes           Json
   created_at        DateTime  @default(now())
 
