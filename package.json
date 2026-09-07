@@ -1,46 +1,93 @@
 {
   
+
   "dependencies": {
   
+
     
+
   "@prisma/adapter-pg": "^7.9.1",
   
+
     
+
   "@prisma/client": "^7.9.1",
   
+
     
+
+  "cookie-parser": "^1.4.7",
+  
+
+    
+
   "dotenv": "^17.4.2",
   
+
     
-  "pg": "^8.22.0"
+
+  "express": "^5.2.1",
   
+
+    
+
+  "morgan": "^1.12.0",
+  
+
+    
+
+  "pg": "^8.22.0",
+  
+
+    
+
+  "zod": "^4.5.4"
+  
+
   },
   
+
   "devDependencies": {
   
+
     
+
   "nodemon": "^3.1.14",
   
+
     
+
   "prisma": "^7.9.1"
   
+
   },
   
+
   "name": "ecommerce",
   
-  "version": "1.0.0",
-  
-  "description": "Version 3.0",
-    
-  
+
+  "version": "1.0.0",  
+
   "scripts": {
   
+
     
-  "test": "echo \"Error: no test specified\" && exit 1"
+
+  "dev": "nodemon src/server.js",
   
+
+    
+
+  "start": "node src/server.js"
+  
+
   },
+
+  "private":"true",
   
-  "license": "ISC",
+
+  "license": "UNLICENSED",
   
+
   "type": "module"
 }

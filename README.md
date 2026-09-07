@@ -1,6 +1,6 @@
 ﻿# E-Commerce Backend System
 
-Version 3.0
+Version 3.1
 
 ## Purpose
 
@@ -35,11 +35,7 @@ Backend platform for a single-vendor online retail business. Manages the complet
 
 | File | Contents |
 |------|----------|
-| [docs/requirements.md](docs/requirements.md) | SRS index: introduction, assumptions, dependencies, and links to all requirements |
+| [docs/requirements.md](docs/requirements.md) | SRS: introduction, assumptions, dependencies, and link to functional requirements |
 | [docs/functional-requirements.md](docs/functional-requirements.md) | Functional requirements (FR-001 — FR-048) |
-| [docs/non-functional-requirements.md](docs/non-functional-requirements.md) | Non-functional requirements (NFR-001 — NFR-007) |
-| [docs/business-rules.md](docs/business-rules.md) | Business rules (BR-001 — BR-023) |
-| [docs/edge-cases.md](docs/edge-cases.md) | Edge cases (EC-001 — EC-025) |
-| [docs/use-cases.md](docs/use-cases.md) | Use case specifications (UC-001 — UC-016) |
 | [diagrams/erd.mmd](diagrams/erd.mmd) | Entity Relationship Diagram |
 | [prisma/schema.prisma](prisma/schema.prisma) | ORM data model |

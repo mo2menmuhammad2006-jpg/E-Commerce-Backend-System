@@ -5,7 +5,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
-const adapter = new PrismaPg(pool)
+const adapter = new PrismaPg(pool, { disposeExternalPool: true })
 
 export const prisma = new PrismaClient({ adapter,
     log:process.env.NODE_ENV==="development"
@@ -24,7 +24,13 @@ export const connectDB=async()=>{
     }
  }
 
+
 export const disconnectDB=async()=>{
-    await prisma.$disconnect();
+    try{
+        await prisma.$disconnect();
+        console.log("DB disconnected with prisma");
+    }catch(error){
+        console.error(`database connection error:${error.message}`);
+    }
 }
 

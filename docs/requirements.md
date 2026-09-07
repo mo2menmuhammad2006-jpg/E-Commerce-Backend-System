@@ -1,12 +1,12 @@
 ﻿Software Requirements Specification (SRS)
 E-Commerce Backend System
-Version 3.0
+Version 3.1
 
 1. Introduction
 1.1 Purpose
 This document defines the business requirements for a medium-sized E-Commerce Backend System. The system supports online retail operations including product catalog management, variant management, inventory tracking, shopping cart functionality, order processing, customer reviews, and authentication.
 1.2 Scope
-The system serves as a backend platform for a single-vendor online retail business. It manages the complete product lifecycle from catalog creation through order fulfillment, excluding payment processing and notification services (planned for future phases).
+The system serves as a backend platform for a single-vendor online retail business. It manages the complete product lifecycle from catalog creation through order fulfillment.
 
 
 1.3 Definitions
@@ -27,9 +27,7 @@ The requirements are split by type into separate documents:
 | Document | IDs | Contents |
 |----------|-----|----------|
 | [functional-requirements.md](functional-requirements.md) | FR-001 — FR-048 | Product, variant, category, image, inventory, cart, order, review, search, currency, shipping, auth |
-| [non-functional-requirements.md](non-functional-requirements.md) | NFR-001 — NFR-007 | Performance, integrity, usability, security, compatibility, compliance |
-| [business-rules.md](business-rules.md) | BR-001 — BR-023 | Product, inventory, cart, order, review, search, shipping & tax rules |
-| [edge-cases.md](edge-cases.md) | EC-001 — EC-025 | Product, inventory, cart, order, review, search, system edge cases |
+
 
 
 6. Assumptions
@@ -41,26 +39,10 @@ The requirements are split by type into separate documents:
 6. Customer Identification: Customers are identified by registered accounts with email and password. Guest checkout is supported without account.
 7. Data Retention: Historical data (orders, reviews, audit logs) is retained permanently. Data purge functionality is out of scope.
 
-7. Dependencies
-Dependency	Status	Impact
-Database System	Required	Core data persistence
 
-8. Future Considerations
-The following features are explicitly excluded from this version but planned for future phases:
-- Payment gateway integration
-- Email and SMS notifications
-- Multi-vendor marketplace
-- Real-time shipping carrier integration
-- Coupon and discount system
-- Loyalty and rewards programs
-- Product recommendation engine
-- Subscription billing
-- Multi-warehouse inventory
-- Advanced analytics and reporting
-- Internationalization (i18n)
-- Mobile-specific APIs
 
-Document Version: 3.0
+
+Document Version: 3.1
 Last Updated: August 1, 2026
 Author: Product Owner
 
@@ -70,3 +52,4 @@ Author: Product Owner
 | 1.0 | July 21, 2026 | Initial release |
 | 2.0 | July 28, 2026 | Added variant management, authentication & authorization; updated scope |
 | 3.0 | August 1, 2026 | Removed inventory reservation system; replaced full-text search with ILIKE search; clarified atomic inventory deduction at order placement and cancellation rules |
+| 3.1 | September 7, 2026 | Removed non-functional requirements, business rules, edge cases, and use cases documents |
