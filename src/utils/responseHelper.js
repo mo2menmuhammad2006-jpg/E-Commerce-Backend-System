@@ -1,4 +1,11 @@
-export const ok = (res, data, status = 200) =>
-  res.status(status).json({ success: true, data });
+export const ok = (res, data = null, message = "", status = 200) => {
+  const body = { success: true, data };
+  if (message) body.message = message;
+  res.status(status).json(body);
+};
 
-export const created = (res, data) =>  res.status(201).json({ success: true, data });
+export const created = (res, data = null, message = "") => {
+  const body = { success: true, data };
+  if (message) body.message = message;
+  res.status(201).json(body);
+};

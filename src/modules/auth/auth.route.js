@@ -1,7 +1,26 @@
 import { Router } from "express";
-import { register, login, logout} from "./auth.controller.js";
+import {
+  registerHandler,
+  loginHandler,
+  logoutHandler,
+  changePasswordHandler,
+  getProfileHandler,
+  updateProfileHandler,
+} from "./auth.controller.js";
+import { sessionAuthMiddleware } from "../../middlewares/sessionAuthMiddleware.js";
+import { validateRequest } from "../../middlewares/validateRequestMiddleware.js";
+import {
+  registerSchema,
+  loginSchema,
+  changePasswordSchema,
+  updateProfileSchema,
+} from "./auth.validation.js";
 
 export const authRoutes = Router();
-authRoutes.post("/register", register);
-authRoutes.post("/login",login);
-authRoutes.post("/logout", logout);
+
+authRoutes.post("/register", validateRequest(registerSchema), registerHandler);
+authRoutes.post("/login", validateRequest(loginSchema), loginHandler);
+authRoutes.post("/logout", logoutHandler);
+authRoutes.post("/change-password", sessionAuthMiddleware, validateRequest(changePasswordSchema), changePasswordHandler);
+authRoutes.patch("/me", sessionAuthMiddleware, validateRequest(updateProfileSchema), updateProfileHandler);
+authRoutes.get("/me", sessionAuthMiddleware, getProfileHandler);
