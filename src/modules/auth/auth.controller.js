@@ -1,5 +1,6 @@
 import { authService } from "./auth.service.js";
 import { ok, created } from "../../utils/responseHelper.js";
+import { SESSION_COOKIE_OPTIONS,SESSION_COOKIE_NAME } from "../../middlewares/sessionSetupMiddleware.js";
 
 const regenerateSession = (req) =>
   new Promise((resolve, reject) => {
@@ -36,11 +37,7 @@ export const logoutHandler = async (req, res, next) => {
     });
   });
 
-  res.clearCookie("session", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  res.clearCookie(SESSION_COOKIE_NAME,SESSION_COOKIE_OPTIONS);
 
   return ok(res, null, "logout successful");
 };

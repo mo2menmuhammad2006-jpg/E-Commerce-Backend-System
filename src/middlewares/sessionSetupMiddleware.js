@@ -7,6 +7,15 @@ const PgSession = pgStoreFactory(session);
 const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
 export const closeSessionPool = () => pool.end();
 
+
+export const SESSION_COOKIE_NAME = "session";
+export const SESSION_COOKIE_OPTIONS = {
+  secure: process.env.NODE_ENV === "production",
+  httpOnly: true,
+  sameSite: "lax",
+  maxAge: Number(process.env.SESSION_EXPIRES_IN) || 604800000                 
+};
+
 export const sessionSetupMiddleware = session({
   store: new PgSession({
     pool: pool,
@@ -16,13 +25,8 @@ export const sessionSetupMiddleware = session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  name: "session",
-  cookie: {
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    sameSite: "lax",
-    maxAge: Number(process.env.SESSION_EXPIRES_IN) || 604800000,
-  },
+  name: SESSION_COOKIE_NAME,
+  cookie: SESSION_COOKIE_OPTIONS
 });
 
 

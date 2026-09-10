@@ -1,10 +1,10 @@
 
 import express from "express";
-import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { errorHandler } from "./middlewares/errorHandlerMiddleware.js";
-import { notFound } from "./middlewares/notFound.js";
+import { notFound } from "./middlewares/notFoundMiddleware.js";
 import { authRoutes } from "./modules/auth/auth.route.js";
+import { auditRoutes } from "./modules/audit/audit.route.js";
 import { sessionSetupMiddleware } from "./middlewares/sessionSetupMiddleware.js";
 
 export const app=express();
@@ -19,6 +19,7 @@ app.use(morgan("combined"))
 
 app.use(sessionSetupMiddleware);
 app.use("/api/v1/auth",authRoutes);
+app.use("/api/v1/audit-logs",auditRoutes);
 
 
 app.use(notFound);

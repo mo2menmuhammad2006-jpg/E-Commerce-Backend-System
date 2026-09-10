@@ -20,7 +20,7 @@ export const authRoutes = Router();
 
 authRoutes.post("/register", validateRequest(registerSchema), registerHandler);
 authRoutes.post("/login", validateRequest(loginSchema), loginHandler);
-authRoutes.post("/logout", logoutHandler);
+authRoutes.post("/logout",sessionAuthMiddleware ,logoutHandler);
 authRoutes.post("/change-password", sessionAuthMiddleware, validateRequest(changePasswordSchema), changePasswordHandler);
 authRoutes.patch("/me", sessionAuthMiddleware, validateRequest(updateProfileSchema), updateProfileHandler);
 authRoutes.get("/me", sessionAuthMiddleware, getProfileHandler);
