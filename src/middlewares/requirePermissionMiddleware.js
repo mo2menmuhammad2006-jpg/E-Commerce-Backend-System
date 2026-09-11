@@ -1,9 +1,9 @@
-import {AppError} from "../utils/appError.js"
+import {AppError} from "../utils/appError.js";
 
 const ROLES = {
   ADMIN: {
     audit_logs:{ read:"all"},
-    
+    store_settings:{ read:"all", write:"all"}
   },
   CUSTOMER: {},
 };
