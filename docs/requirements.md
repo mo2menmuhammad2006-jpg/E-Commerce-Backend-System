@@ -1,6 +1,6 @@
 ﻿Software Requirements Specification (SRS)
 E-Commerce Backend System
-Version 3.1
+Version 3.2
 
 1. Introduction
 1.1 Purpose
@@ -26,11 +26,11 @@ The requirements are split by type into separate documents:
 
 | Document | IDs | Contents |
 |----------|-----|----------|
-| [functional-requirements.md](functional-requirements.md) | FR-001 — FR-048 | Product, variant, category, image, inventory, cart, order, review, search, currency, shipping, auth |
+| [functional-requirements.md](functional-requirements.md) | FR-001 — FR-050 | Product, variant, category, image, inventory, cart, order, review, search, currency, shipping, auth,audit,settings |
 
 
 
-6. Assumptions
+3. Assumptions
 1. Single Currency: The system operates with a single base currency. Multi-currency support is out of scope.
 2. Single Vendor: The system supports a single business entity selling products. Marketplace functionality is excluded.
 3. Digital Products: All products are physical goods requiring shipping. Digital product delivery is out of scope.
@@ -42,8 +42,7 @@ The requirements are split by type into separate documents:
 
 
 
-Document Version: 3.1
-Last Updated: August 1, 2026
+Document Version: 3.2
 Author: Product Owner
 
 ## Change History
@@ -53,3 +52,4 @@ Author: Product Owner
 | 2.0 | July 28, 2026 | Added variant management, authentication & authorization; updated scope |
 | 3.0 | August 1, 2026 | Removed inventory reservation system; replaced full-text search with ILIKE search; clarified atomic inventory deduction at order placement and cancellation rules |
 | 3.1 | September 7, 2026 | Removed non-functional requirements, business rules, edge cases, and use cases documents |
+| 3.2 | September 13, 2026 | added audit logging and settings store to functional requirements |

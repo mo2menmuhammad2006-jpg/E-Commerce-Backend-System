@@ -1,6 +1,6 @@
 ﻿# E-Commerce Backend System
 
-Version 3.1
+Version 3.2
 
 ## Purpose
 
@@ -8,7 +8,7 @@ Medium-sized E-Commerce Backend System supporting online retail operations: prod
 
 ## Scope
 
-Backend platform for a single-vendor online retail business. Manages the complete product lifecycle from catalog creation through order fulfillment. Payment processing and notification services are planned for future phases.
+Backend platform for a single-vendor online retail business. Manages the complete product lifecycle from catalog creation through order fulfillment.
 
 ## Definitions
 

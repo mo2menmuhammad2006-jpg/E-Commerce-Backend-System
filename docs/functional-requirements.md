@@ -1,6 +1,6 @@
 # Functional Requirements
 E-Commerce Backend System
-Version 3.1
+Version 3.2
 
 ## 2. Functional Requirements
 
@@ -310,3 +310,15 @@ FR-047: Login
 FR-048: Manage Profile
 - System shall allow authenticated users to update their profile (name, phone)
 - System shall allow users to change their password
+
+
+
+### 2.13 Audit logging & Store Settings
+FR-049: Audit Logging
+- System shall maintain an audit trail of all administrative and system actions (create, update, delete) across entities: products, categories, variants, reviews, store settings
+- Each entry shall record: entity type, entity ID, action, performer (USER or SYSTEM), and the change details
+
+FR-50: Store Settings
+- System shall maintain a single store configuration record containing: base currency, currency symbol, flat shipping rate, free shipping threshold, and tax rate
+- Only administrators shall view or modify store settings
+- Settings changes shall be recorded in the audit log
