@@ -1,0 +1,128 @@
+import { prisma } from "../../configs/db.js";
+
+const escapeLike = (s) => s.replace(/[\\%_]/g, (c) => "\\" + c);
+
+const SORT_ORDER = {
+  newest: { created_at: "desc" },
+  oldest: { created_at: "asc" },
+  price_asc: { variants: { _min: { price: "asc" } } },
+  price_desc: { variants: { _min: { price: "desc" } } },
+  rating_asc: { reviews: { _avg: { rating: "asc" } } },
+  rating_desc: { reviews: { _avg: { rating: "desc" } } },
+  name_asc: { name: "asc" },
+  name_desc: { name: "desc" },
+};
+
+const LIST_SELECT = {
+  id: true,
+  name: true,
+  created_at: true,
+  images: {
+    where: { is_primary: true },
+    select: { url: true, alt_text: true },
+  },
+  variants: {
+    where: { is_active: true },
+    select: { price: true },
+    orderBy: { price: "asc" },
+  },
+};
+
+function buildListConditions({ search, filter }) {
+  const conditions = [];
+
+  if (search) {
+    conditions.push({
+      OR: [
+        { name: { contains: escapeLike(search), mode: "insensitive" } },
+        { description: { contains: escapeLike(search), mode: "insensitive" } },
+      ],
+    });
+  }
+
+  if (filter.category?.length) {
+    conditions.push({ category_id: { in: filter.category } });
+  }
+
+  if (filter.priceMin != null || filter.priceMax != null) {
+    const price = {};
+    if (filter.priceMin != null) price.gte = filter.priceMin;
+    if (filter.priceMax != null) price.lte = filter.priceMax;
+    conditions.push({ variants: { some: { price } } });
+  }
+
+  if (filter.inStock === true) {
+    conditions.push({
+      variants: { some: { is_active: true, inventory: { total_quantity: { gt: 0 } } } },
+    });
+  }
+
+  return conditions;
+}
+
+async function matchProductIdsByRating(minRating) {
+  const grouped = await prisma.review.groupBy({
+    by: ["product_id"],
+    where: { status: "APPROVED" },
+    _avg: { rating: true },
+    having: { rating: { _avg: { gte: minRating } } },
+  });
+  return grouped.map((row) => row.product_id);
+}
+
+export const productQuery = {
+  async list({ search, filter = {}, sort, skip, take }) {
+    const conditions = [
+      { status: "ACTIVE" },
+      ...buildListConditions({ search, filter }),
+    ];
+
+    if (filter.ratingMin != null) {
+      const ids = await matchProductIdsByRating(filter.ratingMin);
+      conditions.push({ id: { in: ids } });
+    }
+
+    const where = { AND: conditions };
+    const orderBy = SORT_ORDER[sort] ?? SORT_ORDER.newest;
+
+    const [items, total] = await Promise.all([
+      prisma.product.findMany({ where, orderBy, skip, take, select: LIST_SELECT }),
+      prisma.product.count({ where }),
+    ]);
+
+    return { items, total };
+  },
+
+  async getById(id) {
+    return prisma.product.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
+        category: { select: { id: true, name: true } },
+        images: { select:{url:true,alt_text:true,display_order:true,is_primary:true},orderBy: { display_order: "asc" } },
+        variants: {
+          where: { is_active: true },
+          orderBy: { price: "asc" },
+          include: {
+            inventory: { select: { total_quantity: true, low_stock_threshold: true } },
+          },
+        },
+        reviews: {
+          where: { status: "APPROVED" },
+          select: { rating: true, title: true, body: true, created_at: true },
+          orderBy: { created_at: "desc" },
+        },
+      },
+    });
+  },
+};
+
+
+
+
+

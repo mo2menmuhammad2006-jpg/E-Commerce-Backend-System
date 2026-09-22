@@ -1,6 +1,6 @@
 # Functional Requirements
 E-Commerce Backend System
-Version 3.2
+Version 3.3
 
 ## 2. Functional Requirements
 
@@ -46,7 +46,7 @@ FR-006: Create Variant
 - Each product must have at least one active variant to be purchasable
 
 FR-007: Update Variant
-- System shall allow updating of variant attributes: price, SKU, attributes, and status
+- System shall allow updating of variant attributes: price and attributes
 - SKU shall not be modifiable after creation
 - Price changes shall not affect existing orders
 - System shall record the timestamp of last modification

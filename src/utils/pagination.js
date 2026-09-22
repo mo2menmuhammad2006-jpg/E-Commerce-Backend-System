@@ -1,5 +1,6 @@
 export const DEFAULT_PAGE_SIZE = 20;
 export const MAX_PAGE_SIZE = 100;
+export const DEFAULT_PAGE=1;
 
 const toPositiveInt = (value, fallback) => {
   const parsed = Number.parseInt(value, 10);
@@ -7,7 +8,7 @@ const toPositiveInt = (value, fallback) => {
 };
 
 export const getPagination = ({ page, pageSize } = {}) => {
-  const safePage = toPositiveInt(page, 1);
+  const safePage = toPositiveInt(page, DEFAULT_PAGE);
   const safePageSize = Math.min(toPositiveInt(pageSize, DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
 
   return {

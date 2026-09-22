@@ -7,7 +7,7 @@ export const auditService = {
     return prisma.auditLog.create({data});
   },
 
-  async list({ filters = {}, skip = 0, take = 20 }) {
+  async list({ filters = {}, skip, take }) {
     const where = {};
     if (filters.entity_type) where.entity_type = filters.entity_type;
     if (filters.entity_id) where.entity_id = filters.entity_id;
