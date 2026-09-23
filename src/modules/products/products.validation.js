@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_PAGE_SIZE } from "../../utils/pagination";
+import { MAX_PAGE_SIZE } from "../../utils/pagination.js";
 import { ProductStatus } from "@prisma/client";
 
 export const createProductSchema = z.object({

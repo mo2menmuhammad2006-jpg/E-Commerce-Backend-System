@@ -1,69 +1,75 @@
 {
-  
+  
   "dependencies": {
-  
-    
+  
+    
   "@prisma/adapter-pg": "^7.9.1",
-  
-    
+  
+    
   "@prisma/client": "^7.9.1",
-  
-    
+  
+    
   "bcrypt": "^6.0.0",
-  
-    
+  
+    
   "connect-pg-simple": "^10.0.0",
-  
-    
+  
+    
   "cookie-parser": "^1.4.7",
-  
-    
+  
+    
   "dotenv": "^17.4.2",
-  
-    
+  
+    
   "express": "^5.2.1",
-  
-    
+  
+    
+  "express-rate-limit": "^8.7.0",
+  
+    
   "express-session": "^1.19.0",
-  
-    
+  
+    
+  "helmet": "^8.3.0",
+  
+    
   "morgan": "^1.12.0",
-  
-    
+  
+    
   "pg": "^8.22.0",
-  
-    
+  
+    
   "zod": "^4.5.4"
-  
+  
   },
-  
+  
   "devDependencies": {
-  
-    
+  
+    
   "nodemon": "^3.1.14",
-  
-    
+  
+    
   "prisma": "^7.9.1"
-  
+  
   },
-  
+  
   "name": "ecommerce",
-  
+  
   "version": "1.0.0",
-  
+  
   "scripts": {
-  
-    
+  
+    
   "dev": "nodemon src/server.js",
-  
-    
+  
+    
   "start": "node src/server.js"
-  
+  
   },
-  
+  
   "private": "true",
-  
+  
   "license": "UNLICENSED",
-  
+  
   "type": "module"
 }

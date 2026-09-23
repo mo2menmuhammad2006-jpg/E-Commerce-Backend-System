@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { MAX_TAX_RATE_PERCENT,MIN_TAX_RATE_PERCENT } from "./settings.constants";
+import { MAX_TAX_RATE_PERCENT,MIN_TAX_RATE_PERCENT } from "./settings.constants.js";
 
 const currencyCodeSchema = z
   .string()
