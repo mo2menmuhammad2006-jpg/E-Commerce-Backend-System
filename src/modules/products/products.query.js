@@ -1,3 +1,4 @@
+import { ProductStatus } from "@prisma/client";
 import { prisma } from "../../configs/db.js";
 
 const escapeLike = (s) => s.replace(/[\\%_]/g, (c) => "\\" + c);
@@ -7,8 +8,6 @@ const SORT_ORDER = {
   oldest: { created_at: "asc" },
   price_asc: { variants: { _min: { price: "asc" } } },
   price_desc: { variants: { _min: { price: "desc" } } },
-  rating_asc: { reviews: { _avg: { rating: "asc" } } },
-  rating_desc: { reviews: { _avg: { rating: "desc" } } },
   name_asc: { name: "asc" },
   name_desc: { name: "desc" },
 };
@@ -22,7 +21,7 @@ const LIST_SELECT = {
     select: { url: true, alt_text: true },
   },
   variants: {
-    where: { is_active: true },
+    where:{is_active:true},
     select: { price: true },
     orderBy: { price: "asc" },
   },
@@ -71,12 +70,15 @@ async function matchProductIdsByRating(minRating) {
 }
 
 export const productQuery = {
-  async list({ search, filter = {}, sort, skip, take }) {
+  async list({ search, filter = {}, sort, skip, take, includeInactive }) {
+
+    
     const conditions = [
-      { status: "ACTIVE" },
-      ...buildListConditions({ search, filter }),
+    ...(includeInactive ? [] : [{ status: ProductStatus.ACTIVE }]),
+    ...buildListConditions({ search, filter }),
     ];
 
+    
     if (filter.ratingMin != null) {
       const ids = await matchProductIdsByRating(filter.ratingMin);
       conditions.push({ id: { in: ids } });
@@ -84,18 +86,27 @@ export const productQuery = {
 
     const where = { AND: conditions };
     const orderBy = SORT_ORDER[sort] ?? SORT_ORDER.newest;
-
+    const select={
+      ...LIST_SELECT,
+      variants: {
+        ...LIST_SELECT.variants,
+        where: includeInactive ? undefined : { is_active: true },
+      },
+    };
     const [items, total] = await Promise.all([
-      prisma.product.findMany({ where, orderBy, skip, take, select: LIST_SELECT }),
+      prisma.product.findMany({ where, orderBy, skip, take, select:select}),
       prisma.product.count({ where }),
     ]);
 
     return { items, total };
   },
 
-  async getById(id) {
-    return prisma.product.findUnique({
-      where: { id },
+  async getById({ id, includeInactive }) {
+    const productCondition = includeInactive ? { id } : { id, status: ProductStatus.ACTIVE };
+    const variantsCondition = includeInactive ? undefined : { is_active: true };
+    
+    const [product,stats]=await Promise.all([prisma.product.findUnique({
+      where: productCondition,
       select: {
         id: true,
         name: true,
@@ -106,7 +117,7 @@ export const productQuery = {
         category: { select: { id: true, name: true } },
         images: { select:{url:true,alt_text:true,display_order:true,is_primary:true},orderBy: { display_order: "asc" } },
         variants: {
-          where: { is_active: true },
+          where: variantsCondition,
           orderBy: { price: "asc" },
           include: {
             inventory: { select: { total_quantity: true, low_stock_threshold: true } },
@@ -118,7 +129,18 @@ export const productQuery = {
           orderBy: { created_at: "desc" },
         },
       },
-    });
+    }),prisma.review.aggregate({
+      where: { product_id: id, status: "APPROVED" },
+      _avg: { rating: true },
+      _count: { _all: true },
+    }),
+  ]);
+  if(!product) return null;
+  return {
+    ...product,
+    average_rating: stats._avg.rating ?? 0,
+    reviews_count: stats._count._all,
+  };
   },
 };
 

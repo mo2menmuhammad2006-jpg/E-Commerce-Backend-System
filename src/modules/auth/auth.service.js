@@ -2,12 +2,6 @@ import { prisma } from "../../configs/db.js";
 import bcrypt from "bcrypt";
 import { AppError } from "../../utils/appError.js";
 
-async function revokeAllUserSessions(userId) {
-  await prisma.$executeRaw`
-    DELETE FROM "user_sessions" WHERE (sess->>'userId') = ${userId}
-  `;
-}
-
 export const authService = {
   async register({ first_name, last_name, phone, email, password }) {
     const userExists = await prisma.user.findUnique({ where: { email } });
@@ -70,7 +64,6 @@ export const authService = {
       data: { password_hash: hashedPassword },
     });
 
-    await revokeAllUserSessions(userId);
   },
 
   async getProfile(userId) {

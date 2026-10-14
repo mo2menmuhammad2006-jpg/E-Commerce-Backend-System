@@ -4,16 +4,19 @@ import { ProductService } from "./products.service.js";
 import { auditService } from "../audit/audit.service.js";
 import { prisma } from "../../configs/db.js";
 import { AppError } from "../../utils/appError.js";
+import { AuditActorType } from "@prisma/client";
 
 export const listProductsHandler=async(req,res,next)=>{
-    const {search,sort,filter}=req.query;
-    const {page,pageSize,skip,take}=getPagination(req.query);
-    const {items,total}=await ProductService.listProducts({search,sort,filter,skip,take});
+    const {search,sort,filter}=req.validatedQuery;
+    const {page,pageSize,skip,take}=getPagination(req.validatedQuery);
+    const userRole=req?.user?.role;
+    const {items,total}=await ProductService.listProducts({search,sort,filter,skip,take,userRole});
     return ok(res,{items,pagination: {page,pageSize,total,totalPages: Math.ceil(total / pageSize),},},total?undefined:"no products for your specifications,change it");
 };
 
 export const getProductHandler=async(req,res,next)=>{
-    const product=await ProductService.getProduct(req.params.id);
+    const userRole=req?.user?.role;
+    const product=await ProductService.getProduct({id:req.params.id,userRole});
     return ok(res,product);
 }
 
@@ -23,7 +26,7 @@ export const createProductHandler=async(req,res,next)=>{
         entity_type: "product",
         entity_id: product.id,
         action: "create",
-        performed_by_type: "USER",
+        performed_by_type:AuditActorType.USER,
         performed_by: req.user.id,
         changes: req.body,
     });
@@ -45,7 +48,7 @@ export const updateProductHandler=async(req,res,next)=>{
         entity_type: "product",
         entity_id: updatedProduct.id,
         action: "update",
-        performed_by_type: "USER",
+        performed_by_type: AuditActorType.USER,
         performed_by: req.user.id,
         changes,
     });
@@ -60,7 +63,7 @@ export const deleteProductHandler=async(req,res,next)=>{
         entity_type: "product",
         entity_id: product.id,
         action: "deactivate",
-        performed_by_type: "USER",
+        performed_by_type: AuditActorType.USER,
         performed_by: req.user.id,
         changes: { status: { from: previousStatus, to: product.status } },
     });

@@ -3,14 +3,14 @@ import { ok } from "../../utils/responseHelper.js";
 import { getPagination } from "../../utils/pagination.js";
 
 export const listAuditLogsHandler = async (req, res, next) => {
-  const { page, pageSize, skip, take } = getPagination(req.query);
+  const { page, pageSize, skip, take } = getPagination(req.validatedQuery);
 
   const { data, total } = await auditService.list({
     filters: {
-      entity_type: req.query.entity_type,
-      entity_id: req.query.entity_id,
-      from: req.query.from,
-      to: req.query.to,
+      entity_type: req.validatedQuery.entity_type,
+      entity_id: req.validatedQuery.entity_id,
+      from: req.validatedQuery.from,
+      to: req.validatedQuery.to,
     },
     skip,
     take,

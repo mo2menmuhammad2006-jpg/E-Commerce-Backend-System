@@ -1,11 +1,15 @@
 import { AppError } from "../../utils/appError.js";
 import { prisma } from "../../configs/db.js";
-import { InventoryOperation } from "@prisma/client";
+import { InventoryOperation, ProductStatus, UserRole } from "@prisma/client";
 
 export const VariantService = {
-  async getVariant(productId, variantId) {
+  async getVariant({productId, variantId,userRole}) {
     const variant = await prisma.productVariant.findFirst({
-      where: { id: variantId, product_id: productId },
+      where: {
+        id: variantId,
+        product_id: productId,
+        ...(userRole ? {} : { is_active: true, product: { status: ProductStatus.ACTIVE } }),
+      },
       select: {
         id: true,
         sku: true,
@@ -56,6 +60,31 @@ export const VariantService = {
         },
       },
     });
+  },
+
+
+  async updateVariant({productId,variantId,price,attributes}){
+      let changedFields={};
+      const result=prisma.$transaction(async (tx)=>{
+        const variantBeforeUpdate=await tx.productVariant.findFirst({
+          where:{id:variantId,product_id:productId}
+        });
+        if(!variantBeforeUpdate)
+          throw new AppError(404, "variant not found", "NOT_FOUND");
+        const updatedVariant=await tx.productVariant.update({
+          data:{price:price,attributes:attributes},where: { id: variantId }
+        });
+        if(String(variantBeforeUpdate.price)!==String(updatedVariant.price)){
+          changedFields.price={from:variantBeforeUpdate.price,to:updatedVariant.price};
+          await tx.priceLog.create({
+            data:{old_price:variantBeforeUpdate.price,new_price:updatedVariant.price,variant_id:variantId}
+          });
+        }
+        if(JSON.stringify(variantBeforeUpdate.attributes)!==JSON.stringify(updatedVariant.attributes))
+          changedFields.attributes={from:variantBeforeUpdate.attributes,to:updatedVariant.attributes}
+        return {updatedVariant,changedFields};
+      })
+      return result;
   },
   
 

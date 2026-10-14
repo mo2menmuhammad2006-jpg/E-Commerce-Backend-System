@@ -15,7 +15,7 @@ import {
   changePasswordSchema,
   updateProfileSchema,
 } from "./auth.validation.js";
-import { authLimiter } from "../../app.js";
+import { authLimiter } from "../../configs/ratelimiters.js";
 
 export const authRoutes = Router();
 authRoutes.patch("/me", sessionAuthMiddleware, validateRequest(updateProfileSchema), updateProfileHandler);

@@ -1,11 +1,4 @@
 import session from "express-session";
-import pgStoreFactory from "connect-pg-simple";
-import pg from "pg";
-
-const PgSession = pgStoreFactory(session);
-
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-export const closeSessionPool = () => pool.end();
 
 
 export const SESSION_COOKIE_NAME = "session";
@@ -17,11 +10,6 @@ export const SESSION_COOKIE_OPTIONS = {
 };
 
 export const sessionSetupMiddleware = session({
-  store: new PgSession({
-    pool: pool,
-    tableName: "user_sessions",        
-    createTableIfMissing: true,        
-  }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,

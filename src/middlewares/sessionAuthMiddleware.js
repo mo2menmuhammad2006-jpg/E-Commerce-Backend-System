@@ -1,7 +1,8 @@
 import { AppError } from "../utils/appError.js";
 import { prisma } from "../configs/db.js";
-export const sessionAuthMiddleware = async (req, res, next) => {
-    if (!req.session || !req.session.userId) {
+const createSessionAuth =(softAuthn=false)=>async (req, res, next) => {
+    if (!req.session?.userId) {
+        if(softAuthn) return next();
         return next(new AppError(401, "not authenticated,no session","UNAUTHORIZED"));
     }
 
@@ -9,10 +10,16 @@ export const sessionAuthMiddleware = async (req, res, next) => {
         where: { id: req.session.userId },
         select:{id:true,role:true}
     });
-    if (!user) {
+    
+    if(!user){
         return next(new AppError(401, "user no longer exists","UNAUTHORIZED"));
     }
-
     req.user = user;
+     
+    
     return next();
 };
+
+
+export const sessionAuthMiddleware = createSessionAuth(false);
+export const optionalSessionAuthMiddleware = createSessionAuth(true);

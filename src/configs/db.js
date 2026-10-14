@@ -4,7 +4,6 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 
-import { closeSessionPool } from '../middlewares/sessionSetupMiddleware.js'
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL })
 const adapter = new PrismaPg(pool, { disposeExternalPool: true })
@@ -31,8 +30,6 @@ export const disconnectDB=async()=>{
     try{
         await prisma.$disconnect();
         console.log("DB disconnected with prisma");
-        closeSessionPool();
-        console.log("session pool closed")
     }catch(error){
         console.error(`database connection error:${error.message}`);
     }

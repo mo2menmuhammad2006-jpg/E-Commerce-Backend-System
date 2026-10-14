@@ -6,13 +6,14 @@ import {
   deleteVariantHandler,
   getPriceLogsHandler,
 } from "./variants.controller.js";
-import { sessionAuthMiddleware } from "../../middlewares/sessionAuthMiddleware.js";
+import { optionalSessionAuthMiddleware, sessionAuthMiddleware } from "../../middlewares/sessionAuthMiddleware.js";
 import { requirePermission } from "../../middlewares/requirePermissionMiddleware.js";
 import { validateRequest } from "../../middlewares/validateRequestMiddleware.js";
 import {
   createVariantSchema,
   updateVariantSchema,
   variantIdSchema,
+  getPriceLogsSchema,
 } from "./variants.validation.js";
 
 export const variantsRoutes = Router({ mergeParams: true });
@@ -27,6 +28,7 @@ variantsRoutes.post(
 
 variantsRoutes.get(
   "/:id",
+  optionalSessionAuthMiddleware,
   validateRequest(variantIdSchema, "params"),
   getVariantHandler
 );
@@ -53,5 +55,6 @@ variantsRoutes.get(
   sessionAuthMiddleware,
   requirePermission("price_logs", "read"),
   validateRequest(variantIdSchema, "params"),
+  validateRequest(getPriceLogsSchema, "query"),
   getPriceLogsHandler
 );

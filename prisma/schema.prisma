@@ -117,7 +117,7 @@ model ProductImage {
   product_id    String   @db.Uuid
   url           String
   alt_text      String
-  display_order Int      @default(0)
+  display_order Int 
   is_primary    Boolean  @default(false)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
@@ -326,4 +326,3 @@ model AuditLog {
   @@index([created_at])
 
 }
-

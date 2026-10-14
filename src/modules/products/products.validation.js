@@ -21,12 +21,15 @@ export const productIdSchema = z.object({
   id: z.string().uuid("invalid product id"),
 });
 
+export const productIdParamSchema = z.object({
+  productId: z.string().uuid("invalid product id"),
+});
+
 export const listProductsSchema = z.object({
   search: z.string().trim().optional(),
   sort: z.enum([
     "newest", "oldest",
     "price_asc", "price_desc",
-    "rating_asc", "rating_desc",
     "name_asc", "name_desc",
   ]).default("newest"),
   category: z.string().optional(),

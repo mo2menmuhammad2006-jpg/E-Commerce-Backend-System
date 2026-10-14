@@ -1,6 +1,6 @@
 ﻿Software Requirements Specification (SRS)
 E-Commerce Backend System
-Version 3.3
+Version 3.4
 
 1. Introduction
 1.1 Purpose
@@ -41,10 +41,6 @@ The requirements are split by type into separate documents:
 
 
 
-
-Document Version: 3.2
-Author: Product Owner
-
 ## Change History
 | Version | Date | Description |
 |---------|------|-------------|
@@ -54,3 +50,4 @@ Author: Product Owner
 | 3.1 | September 7, 2026 | Removed non-functional requirements, business rules, edge cases, and use cases documents |
 | 3.2 | September 13, 2026 | added audit logging and settings store to functional requirements |
 | 3.3 | September 22, 2026 | changed FR-007 update variant |
+| 3.4 | September 27, 2026 | changed FR-014  add product image |

@@ -66,7 +66,7 @@ CREATE TABLE "ProductImage" (
     "product_id" UUID NOT NULL,
     "url" TEXT NOT NULL,
     "alt_text" TEXT NOT NULL,
-    "display_order" INTEGER NOT NULL DEFAULT 0,
+    "display_order" INTEGER NOT NULL,
     "is_primary" BOOLEAN NOT NULL DEFAULT false,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -413,6 +413,9 @@ ALTER TABLE "ProductVariant" ADD CONSTRAINT product_variants_price_check
 -- product_images: only one primary per product (FR-014)
 CREATE UNIQUE INDEX product_images_one_primary
   ON "ProductImage" (product_id) WHERE is_primary = true;
+
+ALTER TABLE "ProductImage" ADD CONSTRAINT product_images_display_order_check
+  CHECK (display_order BETWEEN 1 AND 10);
 
 -- categories: root names unique (FR-010, NULL parent_id won't be caught by @@unique)
 CREATE UNIQUE INDEX categories_root_name_unique

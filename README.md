@@ -1,6 +1,6 @@
 ﻿# E-Commerce Backend System
 
-Version 3.3
+Version 3.4
 
 ## Purpose
 

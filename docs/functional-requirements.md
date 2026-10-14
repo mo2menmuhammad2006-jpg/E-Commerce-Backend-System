@@ -1,6 +1,6 @@
 # Functional Requirements
 E-Commerce Backend System
-Version 3.3
+Version 3.4
 
 ## 2. Functional Requirements
 
@@ -90,11 +90,9 @@ FR-013: Get Category Tree
 
 FR-014: Add Product Image
 - System shall allow upload of multiple images per product
-- Each image shall have: URL/reference, alt text, display order, and primary flag
+- Each image shall have: URL/reference, alt text, and primary flag
 - Only one image per product can be marked as primary
-- System shall validate image format (JPEG, PNG, WebP)
-- Maximum file size shall be 5MB per image
-- Maximum images per product shall be 10
+
 
 FR-015: Update Product Image
 - System shall allow update of image metadata: alt text, display order, primary flag
