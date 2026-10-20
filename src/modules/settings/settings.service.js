@@ -1,43 +1,51 @@
 import { prisma } from "../../configs/db.js";
 
-const DEFAULTS = {
-  base_currency: "USD",
-  currency_symbol: "$",
-  flat_rate_shipping: "0.00",
-  free_shipping_threshold: "0.00",
-  tax_rate_percent: "0.00",
-};
+export class SettingsService {
+  static #DEFAULTS = {
+    base_currency: "USD",
+    currency_symbol: "$",
+    flat_rate_shipping: "0.00",
+    free_shipping_threshold: "0.00",
+    tax_rate_percent: "0.00",
+  };
 
-const SELECT = {
-  base_currency: true,
-  currency_symbol: true,
-  flat_rate_shipping: true,
-  free_shipping_threshold: true,
-  tax_rate_percent: true,
-  updated_at: true,
-};
+  static #SELECT = {
+    base_currency: true,
+    currency_symbol: true,
+    flat_rate_shipping: true,
+    free_shipping_threshold: true,
+    tax_rate_percent: true,
+    updated_at: true,
+  };
 
-export const settingsService = {
+  #prisma;
+
+  constructor({ prisma: prismaClient = prisma } = {}) {
+    this.#prisma = prismaClient;
+  }
+
   async getSettings() {
-    const existing = await prisma.storeSettings.findUnique({
+    const existing = await this.#prisma.storeSettings.findUnique({
       where: { id: 1 },
-      select: SELECT,
+      select: SettingsService.#SELECT,
     });
 
     if (existing) return existing;
 
-    return prisma.storeSettings.create({
-      data: { id: 1, ...DEFAULTS },
-      select: SELECT,
+    return this.#prisma.storeSettings.create({
+      data: { id: 1, ...SettingsService.#DEFAULTS },
+      select: SettingsService.#SELECT,
     });
-  },
+  }
 
   async updateAllOrSomeSettings(data) {
-    return prisma.storeSettings.upsert({
+    return this.#prisma.storeSettings.upsert({
       where: { id: 1 },
       update: data,
-      create: { id: 1,...DEFAULTS,...data },
-      select:SELECT
+      create: { id: 1, ...SettingsService.#DEFAULTS, ...data },
+      select: SettingsService.#SELECT,
     });
-  },
-};
+  }
+}
+
+export const settingsService = new SettingsService();

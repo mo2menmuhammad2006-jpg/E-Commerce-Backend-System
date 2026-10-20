@@ -10,6 +10,8 @@ import { settingsRoutes } from "./modules/settings/settings.route.js";
 import { sessionSetupMiddleware } from "./middlewares/sessionSetupMiddleware.js";
 import { productsRoutes } from "./modules/products/products.route.js";
 import { apiLimiter } from "./configs/ratelimiters.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./configs/swagger.js";
 export const app=express();
 
 
@@ -38,6 +40,11 @@ app.use("/api/v1/auth",authRoutes);
 app.use("/api/v1/audit-logs",auditRoutes);
 app.use("/api/v1/settings",settingsRoutes);
 app.use("/api/v1/products",productsRoutes)
+
+if(process.env.NODE_ENV==="development"){
+  app.get("/api/v1/docs.json", (req, res) => res.json(swaggerSpec));
+  app.use("/api/v1/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 
 app.use(notFound);

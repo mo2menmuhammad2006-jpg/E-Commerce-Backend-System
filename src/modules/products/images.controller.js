@@ -1,64 +1,57 @@
-import { ProductStatus, UserRole } from "@prisma/client";
-import { prisma } from "../../configs/db.js";
 import { ok, created } from "../../utils/responseHelper.js";
-import { AppError } from "../../utils/appError.js";
-import { ImagesService } from "./images.service.js";
+import { imagesService } from "./images.service.js";
 
-export const getImagesHandler = async (req, res, next) => {
-  const isAdmin = req?.user?.role === UserRole.ADMIN;
+export class ImagesController {
+  #imagesService;
 
-  const product = await prisma.product.findUnique({
-    where: { id: req.params.productId },
-    select: { id: true, status: true },
-  });
-  if (!product ||(!isAdmin && product.status !== ProductStatus.ACTIVE)) {
-    throw new AppError(404, "product not found", "NOT_FOUND");
+  constructor({ imagesService: service = imagesService } = {}) {
+    this.#imagesService = service;
   }
 
-  const images = await prisma.productImage.findMany({
-    where: { product_id: req.params.productId },
-    orderBy: { display_order: "asc" },
-    select: { id: true, display_order: true, url: true, alt_text: true, is_primary: true },
-  });
+  get = async (req, res, next) => {
+    const userRole = req?.user?.role;
+    const images = await this.#imagesService.getImages({ productId: req.params.productId, userRole });
+    return ok(res, images);
+  };
 
-  return ok(res, images);
-};
+  add = async (req, res, next) => {
+    const { finalImages } = await this.#imagesService.addImages({
+      productId: req.params.productId,
+      images: req.body.images,
+    });
 
-export const addImagesHandler = async (req, res, next) => {
-  const { finalImages } = await ImagesService.addImages({
-    productId: req.params.productId,
-    images: req.body.images,
-  });
+    return created(res, finalImages, "images added successfully");
+  };
 
-  return created(res, finalImages, "images added successfully");
-};
+  update = async (req, res, next) => {
+    const { updatedImage } = await this.#imagesService.updateImage({
+      productId: req.params.productId,
+      imageId: req.params.id,
+      alt_text: req.body.alt_text,
+      display_order: req.body.display_order,
+      is_primary: req.body.is_primary,
+    });
 
-export const updateImageHandler = async (req, res, next) => {
-  const { updatedImage } = await ImagesService.updateImage({
-    productId: req.params.productId,
-    imageId: req.params.id,
-    alt_text: req.body.alt_text,
-    display_order: req.body.display_order,
-    is_primary: req.body.is_primary,
-  });
+    return ok(res, updatedImage, "image updated successfully");
+  };
 
-  return ok(res, updatedImage, "image updated successfully");
-};
+  delete = async (req, res, next) => {
+    const { deletedImage } = await this.#imagesService.deleteImage({
+      productId: req.params.productId,
+      imageId: req.params.id,
+    });
 
-export const deleteImageHandler = async (req, res, next) => {
-  const { deletedImage } = await ImagesService.deleteImage({
-    productId: req.params.productId,
-    imageId: req.params.id,
-  });
+    return ok(res, deletedImage, "image deleted successfully");
+  };
 
-  return ok(res, deletedImage, "image deleted successfully");
-};
+  reorder = async (req, res, next) => {
+    const { reorderedImages } = await this.#imagesService.reorderImages({
+      productId: req.params.productId,
+      images: req.body.images,
+    });
 
-export const reorderImagesHandler = async (req, res, next) => {
-  const { reorderedImages } = await ImagesService.reorderImages({
-    productId: req.params.productId,
-    images: req.body.images,
-  });
+    return ok(res, reorderedImages, "images reordered successfully");
+  };
+}
 
-  return ok(res, reorderedImages, "images reordered successfully");
-};
+export const imagesController = new ImagesController();

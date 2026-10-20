@@ -1,11 +1,17 @@
 import { prisma } from "../../configs/db.js";
 import { logAuditSchema } from "./audit.validation.js";
-export const auditService = {
-  async log(input) {
 
-    const data = logAuditSchema.parse(input); 
-    return prisma.auditLog.create({data});
-  },
+export class AuditService {
+  #prisma;
+
+  constructor({ prisma: prismaClient = prisma } = {}) {
+    this.#prisma = prismaClient;
+  }
+
+  async log(input) {
+    const data = logAuditSchema.parse(input);
+    return this.#prisma.auditLog.create({ data });
+  }
 
   async list({ filters = {}, skip, take }) {
     const where = {};
@@ -18,7 +24,7 @@ export const auditService = {
     }
 
     const [data, total] = await Promise.all([
-      prisma.auditLog.findMany({
+      this.#prisma.auditLog.findMany({
         where,
         skip,
         take,
@@ -27,9 +33,11 @@ export const auditService = {
           performed_by_user: { select: { id: true, email: true, role: true } },
         },
       }),
-      prisma.auditLog.count({ where }),
+      this.#prisma.auditLog.count({ where }),
     ]);
 
     return { data, total };
-  },
-};
+  }
+}
+
+export const auditService = new AuditService();

@@ -1,66 +1,76 @@
 import { authService } from "./auth.service.js";
 import { ok, created } from "../../utils/responseHelper.js";
-import { SESSION_COOKIE_OPTIONS,SESSION_COOKIE_NAME } from "../../middlewares/sessionSetupMiddleware.js";
+import { SESSION_COOKIE_OPTIONS, SESSION_COOKIE_NAME } from "../../middlewares/sessionSetupMiddleware.js";
 
-const regenerateSession = (req) =>
-  new Promise((resolve, reject) => {
-    req.session.regenerate((err) => {
-      if (err) reject(err);
-      else resolve();
+export class AuthController {
+  #authService;
+
+  constructor({ authService: service = authService } = {}) {
+    this.#authService = service;
+  }
+
+  static #regenerateSession(req) {
+    return new Promise((resolve, reject) => {
+      req.session.regenerate((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
     });
-  });
+  }
 
-export const registerHandler = async (req, res, next) => {
-  const user = await authService.register(req.body);
+  register = async (req, res, next) => {
+    const user = await this.#authService.register(req.body);
 
-  await regenerateSession(req);
-  req.session.userId = user.id;
+    await AuthController.#regenerateSession(req);
+    req.session.userId = user.id;
 
-  return created(res, user, "user created successfully");
-};
+    return created(res, user, "user created successfully");
+  };
 
-export const loginHandler = async (req, res, next) => {
-  const user = await authService.login(req.body);
+  login = async (req, res, next) => {
+    const user = await this.#authService.login(req.body);
 
-  await regenerateSession(req);
-  req.session.userId = user.id;
+    await AuthController.#regenerateSession(req);
+    req.session.userId = user.id;
 
-  return ok(res, user, "login successful");
-};
+    return ok(res, user, "login successful");
+  };
 
-export const logoutHandler = async (req, res, next) => {
-
-  await new Promise((resolve, reject) => {
-    req.session.destroy((err) => {
-      if (err) reject(err);
-      else resolve();
+  logout = async (req, res, next) => {
+    await new Promise((resolve, reject) => {
+      req.session.destroy((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
     });
-  });
 
-  res.clearCookie(SESSION_COOKIE_NAME,SESSION_COOKIE_OPTIONS);
+    res.clearCookie(SESSION_COOKIE_NAME, SESSION_COOKIE_OPTIONS);
 
-  return ok(res, null, "logout successful");
-};
+    return ok(res, null, "logout successful");
+  };
 
-export const changePasswordHandler = async (req, res, next) => {
-  const userId = req.session.userId;
+  changePassword = async (req, res, next) => {
+    const userId = req.session.userId;
 
-  await authService.changePassword(userId, req.body);
+    await this.#authService.changePassword(userId, req.body);
 
-  await regenerateSession(req);
-  req.session.userId = userId;
+    await AuthController.#regenerateSession(req);
+    req.session.userId = userId;
 
-  return ok(res, null, "password changed successfully");
-};
+    return ok(res, null, "password changed successfully");
+  };
 
-export const getProfileHandler = async (req, res, next) => {
-  const user = await authService.getProfile(req.session.userId);
+  getProfile = async (req, res, next) => {
+    const user = await this.#authService.getProfile(req.session.userId);
 
-  return ok(res, user);
-};
+    return ok(res, user);
+  };
 
-export const updateProfileHandler = async (req, res, next) => {
-  const user = await authService.updateProfile(req.session.userId, req.body);
+  updateProfile = async (req, res, next) => {
+    const user = await this.#authService.updateProfile(req.session.userId, req.body);
 
-  return ok(res, user, "profile updated successfully");
-};
+    return ok(res, user, "profile updated successfully");
+  };
+}
+
+export const authController = new AuthController();
