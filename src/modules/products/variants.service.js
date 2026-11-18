@@ -1,6 +1,7 @@
 import { AppError } from "../../utils/appError.js";
 import { prisma } from "../../configs/db.js";
 import { auditService } from "../audit/audit.service.js";
+import { ENTITY } from "../audit/audit.constants.js";
 import { InventoryOperation, ProductStatus, UserRole, AuditActorType } from "@prisma/client";
 import { isDeepStrictEqual } from "node:util";
 
@@ -79,7 +80,7 @@ export class VariantService {
     });
 
     await this.#auditService.log({
-      entity_type: "variant",
+      entity_type: ENTITY.VARIANT,
       entity_id: variant.id,
       action: "create",
       performed_by_type: AuditActorType.USER,
@@ -114,7 +115,7 @@ export class VariantService {
 
     if (changedFields.attributes !== undefined || changedFields.price !== undefined) {
       await this.#auditService.log({
-        entity_type: "variant",
+        entity_type: ENTITY.VARIANT,
         entity_id: updatedVariant.id,
         action: "update",
         performed_by_type: AuditActorType.USER,
@@ -150,7 +151,7 @@ export class VariantService {
     });
 
     await this.#auditService.log({
-      entity_type: "variant",
+      entity_type: ENTITY.VARIANT,
       entity_id: variant.id,
       action: "deactivate",
       performed_by_type: AuditActorType.USER,

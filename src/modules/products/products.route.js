@@ -27,7 +27,7 @@ productsRoutes.use("/:productId/variants",validateRequest(productIdParamSchema,"
  *   post:
  *     tags: [Products]
  *     summary: Create a product (admin)
- *     description: Requires an ADMIN session (permission `product:create`).
+ *     description: Requires an ADMIN session (permission `products:create`).
  *     requestBody:
  *       required: true
  *       content:
@@ -58,7 +58,7 @@ productsRoutes.use("/:productId/variants",validateRequest(productIdParamSchema,"
 productsRoutes.post(
   "/",
   sessionAuthMiddleware,
-  requirePermission("product", "create"),
+  requirePermission("products", "create"),
   validateRequest(createProductSchema),
   productsController.create
 );
@@ -137,7 +137,7 @@ productsRoutes.get(
  *   patch:
  *     tags: [Products]
  *     summary: Update a product (admin)
- *     description: Requires an ADMIN session (permission `product:update`). Activating a product requires at least one active variant.
+ *     description: Requires an ADMIN session (permission `products:update`). Activating a product requires at least one active variant.
  *     parameters:
  *       - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
  *     requestBody:
@@ -171,7 +171,7 @@ productsRoutes.get(
 productsRoutes.patch(
   "/:id",
   sessionAuthMiddleware,
-  requirePermission("product", "update"),
+  requirePermission("products", "update"),
   validateRequest(productIdSchema, "params"),
   validateRequest(updateProductSchema),
   productsController.update
@@ -183,7 +183,7 @@ productsRoutes.patch(
  *   delete:
  *     tags: [Products]
  *     summary: Deactivate a product (admin)
- *     description: Requires an ADMIN session (permission `product:delete`). Sets status to INACTIVE.
+ *     description: Requires an ADMIN session (permission `products:delete`). Sets status to INACTIVE.
  *     parameters:
  *       - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
  *     responses:
@@ -205,7 +205,7 @@ productsRoutes.patch(
 productsRoutes.delete(
   "/:id",
   sessionAuthMiddleware,
-  requirePermission("product", "delete"),
+  requirePermission("products", "delete"),
   validateRequest(productIdSchema, "params"),
   productsController.delete
 );

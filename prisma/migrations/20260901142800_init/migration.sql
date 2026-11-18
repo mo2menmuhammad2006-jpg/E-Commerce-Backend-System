@@ -222,7 +222,7 @@ CREATE TABLE "PriceLog" (
 
 -- CreateTable
 CREATE TABLE "StoreSettings" (
-    "id" BIGINT NOT NULL DEFAULT 1,
+    "id" UUID NOT NULL,
     "base_currency" TEXT NOT NULL,
     "currency_symbol" TEXT NOT NULL,
     "flat_rate_shipping" DECIMAL(10,2) NOT NULL,
@@ -396,10 +396,6 @@ ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_performed_by_fkey" FOREIGN KEY (
 
 
 
-
-
-
-
 -- users: email unique case-insensitive (docs only say "unique")
 CREATE UNIQUE INDEX users_email_ci_unique ON "User" (LOWER(email));
 
@@ -467,5 +463,5 @@ ALTER TABLE "StoreSettings" ADD CONSTRAINT store_settings_tax_check
 ALTER TABLE "StoreSettings" ADD CONSTRAINT store_settings_non_negative_check
   CHECK (flat_rate_shipping >= 0 AND free_shipping_threshold >= 0);
 
-ALTER TABLE "StoreSettings" ADD CONSTRAINT store_settings_singleton_check CHECK (id = 1);
+ALTER TABLE "StoreSettings" ADD CONSTRAINT store_settings_singleton_check CHECK (id = '00000000-0000-0000-0000-000000000000');
 

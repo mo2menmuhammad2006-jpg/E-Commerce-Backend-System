@@ -1,5 +1,4 @@
-
-import "dotenv/config";
+import { env } from "./configs/env.js";
 
 import { app } from "./app.js";
 
@@ -14,7 +13,7 @@ await connectDB();
 
 
 
-const port=process.env.PORT||5001;
+const port=env.PORT;
 const server=app.listen(port,()=>{console.log(`server is listening on ${port}`)});
 
 

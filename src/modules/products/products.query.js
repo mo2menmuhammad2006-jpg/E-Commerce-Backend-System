@@ -46,10 +46,10 @@ export class ProductQuery {
       conditions.push({ category_id: { in: filter.category } });
     }
 
-    if (filter.priceMin != null || filter.priceMax != null) {
+    if (filter.priceMin !== undefined || filter.priceMax !== undefined) {
       const price = {};
-      if (filter.priceMin != null) price.gte = filter.priceMin;
-      if (filter.priceMax != null) price.lte = filter.priceMax;
+      if (filter.priceMin !== undefined) price.gte = filter.priceMin;
+      if (filter.priceMax !== undefined) price.lte = filter.priceMax;
       conditions.push({ variants: { some: { price } } });
     }
 
@@ -84,7 +84,7 @@ export class ProductQuery {
       ...ProductQuery.#buildListConditions({ search, filter }),
     ];
 
-    if (filter.ratingMin != null) {
+    if (filter.ratingMin !== undefined) {
       const ids = await this.#matchProductIdsByRating(filter.ratingMin);
       conditions.push({ id: { in: ids } });
     }

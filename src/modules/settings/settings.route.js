@@ -40,10 +40,10 @@ settingsRoutes.get(
 /**
  * @openapi
  * /settings:
- *   put:
+ *   post:
  *     tags: [Settings]
- *     summary: Set all store settings (admin)
- *     description: Requires an ADMIN session (permission `store_settings:write`). Upserts the singleton settings row.
+ *     summary: Create store settings (admin)
+ *     description: Requires an ADMIN session (permission `store_settings:write`). Creates the singleton settings row for the first time. Returns 409 if it already exists.
  *     requestBody:
  *       required: true
  *       content:
@@ -70,8 +70,9 @@ settingsRoutes.get(
  *                 data: { $ref: "#/components/schemas/StoreSettings" }
  *       401: { $ref: "#/components/responses/Unauthorized" }
  *       403: { $ref: "#/components/responses/Forbidden" }
+ *       409: { $ref: "#/components/responses/Conflict" }
  */
-settingsRoutes.put(
+settingsRoutes.post(
   "/",
   sessionAuthMiddleware,
   requirePermission("store_settings", "write"),
@@ -84,8 +85,8 @@ settingsRoutes.put(
  * /settings:
  *   patch:
  *     tags: [Settings]
- *     summary: Update some store settings (admin)
- *     description: Requires an ADMIN session (permission `store_settings:write`). Upserts the singleton settings row.
+ *     summary: Update store settings (admin)
+ *     description: Requires an ADMIN session (permission `store_settings:write`). Accepts one or all fields. Returns 404 if the settings row does not exist.
  *     requestBody:
  *       required: true
  *       content:
@@ -112,6 +113,7 @@ settingsRoutes.put(
  *                 data: { $ref: "#/components/schemas/StoreSettings" }
  *       401: { $ref: "#/components/responses/Unauthorized" }
  *       403: { $ref: "#/components/responses/Forbidden" }
+ *       404: { $ref: "#/components/responses/NotFound" }
  */
 settingsRoutes.patch(
   "/",

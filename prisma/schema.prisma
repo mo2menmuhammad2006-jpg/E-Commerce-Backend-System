@@ -301,7 +301,7 @@ model PriceLog {
 }
 
 model StoreSettings {
-  id                     BigInt  @id @default(1)
+  id String @id @db.Uuid @default("00000000-0000-0000-0000-000000000000")
   base_currency          String
   currency_symbol        String
   flat_rate_shipping     Decimal @db.Decimal(10, 2)
@@ -325,4 +325,14 @@ model AuditLog {
   @@index([entity_type, entity_id])
   @@index([created_at])
 
+}
+
+
+model Session {
+  sid    String   @id @db.VarChar
+  sess   Json
+  expire DateTime @db.Timestamp(6)
+
+  @@index([expire], map: "IDX_session_expire")
+  @@map("session")
 }

@@ -1,6 +1,6 @@
 ﻿Software Requirements Specification (SRS)
 E-Commerce Backend System
-Version 3.4
+Version 0.1.0
 
 1. Introduction
 1.1 Purpose
@@ -41,13 +41,3 @@ The requirements are split by type into separate documents:
 
 
 
-## Change History
-| Version | Date | Description |
-|---------|------|-------------|
-| 1.0 | July 21, 2026 | Initial release |
-| 2.0 | July 28, 2026 | Added variant management, authentication & authorization; updated scope |
-| 3.0 | August 1, 2026 | Removed inventory reservation system; replaced full-text search with ILIKE search; clarified atomic inventory deduction at order placement and cancellation rules |
-| 3.1 | September 7, 2026 | Removed non-functional requirements, business rules, edge cases, and use cases documents |
-| 3.2 | September 13, 2026 | added audit logging and settings store to functional requirements |
-| 3.3 | September 22, 2026 | changed FR-007 update variant |
-| 3.4 | September 27, 2026 | changed FR-014  add product image |

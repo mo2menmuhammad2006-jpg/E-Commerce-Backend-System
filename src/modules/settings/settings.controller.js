@@ -14,13 +14,13 @@ export class SettingsController {
   };
 
   create = async (req, res, next) => {
-    const settings = await this.#settingsService.updateAllOrSomeSettings(req.body);
+    const settings = await this.#settingsService.createSettings(req.body, req.user.id);
 
     return created(res, settings, "settings created successfully");
   };
 
   update = async (req, res, next) => {
-    const settings = await this.#settingsService.updateAllOrSomeSettings(req.body);
+    const settings = await this.#settingsService.updateSettings(req.body, req.user.id);
 
     return ok(res, settings, "settings updated successfully");
   };

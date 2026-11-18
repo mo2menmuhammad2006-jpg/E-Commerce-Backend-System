@@ -9,6 +9,12 @@ export class AuthService {
     this.#prisma = prismaClient;
   }
 
+  static async revokeAllUserSessions(userId) {
+    await prisma.$executeRaw`
+      DELETE FROM "session" WHERE (sess->>'userId') = ${userId}
+    `;
+  }
+
   async register({ first_name, last_name, phone, email, password }) {
     const userExists = await this.#prisma.user.findUnique({ where: { email } });
     if (userExists) {
@@ -68,6 +74,8 @@ export class AuthService {
       where: { id: userId },
       data: { password_hash: hashedPassword },
     });
+
+    await AuthService.revokeAllUserSessions(userId);
   }
 
   async getProfile(userId) {

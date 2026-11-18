@@ -1,24 +1,14 @@
-import 'dotenv/config'
+import { env } from '../src/configs/env.js'
 import { Pool } from 'pg'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import bcrypt from 'bcrypt'
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const pool = new Pool({ connectionString: env.DATABASE_URL })
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) })
 
 async function main() {
-  const password = await bcrypt.hash("Admin123!", 10)
-
-  const admin = await prisma.user.create({
-    data: {
-      email: "admin@test.com",
-      password_hash: password,
-      first_name: "Ad",
-      last_name: "Min",
-      role: "ADMIN",
-    },
-  })
+  const password = await bcrypt.hash("Admin123!", 12)
 
   await prisma.user.create({
     data: {
@@ -138,7 +128,7 @@ async function main() {
     ],
   })
 
-  console.log("seed done. admin:", admin.email, "/ password: Admin123!")
+  console.log("seed done. customer: customer@test.com / password: Admin123!")
 }
 
 main()

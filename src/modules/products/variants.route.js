@@ -18,7 +18,7 @@ export const variantsRoutes = Router({ mergeParams: true });
  *   post:
  *     tags: [Variants]
  *     summary: Create a variant (admin)
- *     description: Requires an ADMIN session (permission `variant:create`). Creates the variant with its inventory and an initial inventory log.
+ *     description: Requires an ADMIN session (permission `variants:create`). Creates the variant with its inventory and an initial inventory log.
  *     parameters:
  *       - { in: path, name: productId, required: true, schema: { type: string, format: uuid } }
  *     requestBody:
@@ -57,7 +57,7 @@ export const variantsRoutes = Router({ mergeParams: true });
 variantsRoutes.post(
   "/",
   sessionAuthMiddleware,
-  requirePermission("variant", "create"),
+  requirePermission("variants", "create"),
   validateRequest(createVariantSchema),
   variantsController.create
 );
@@ -97,7 +97,7 @@ variantsRoutes.get(
  *   patch:
  *     tags: [Variants]
  *     summary: Update a variant (admin)
- *     description: Requires an ADMIN session (permission `variant:update`). A price change is recorded in a price log.
+ *     description: Requires an ADMIN session (permission `variants:update`). A price change is recorded in a price log.
  *     parameters:
  *       - { in: path, name: productId, required: true, schema: { type: string, format: uuid } }
  *       - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -133,7 +133,7 @@ variantsRoutes.get(
 variantsRoutes.patch(
   "/:id",
   sessionAuthMiddleware,
-  requirePermission("variant", "update"),
+  requirePermission("variants", "update"),
   validateRequest(variantIdSchema, "params"),
   validateRequest(updateVariantSchema),
   variantsController.update
@@ -145,7 +145,7 @@ variantsRoutes.patch(
  *   delete:
  *     tags: [Variants]
  *     summary: Deactivate a variant (admin)
- *     description: Requires an ADMIN session (permission `variant:delete`). Sets is_active=false. The product must retain at least one active variant.
+ *     description: Requires an ADMIN session (permission `variants:delete`). Sets is_active=false. The product must retain at least one active variant.
  *     parameters:
  *       - { in: path, name: productId, required: true, schema: { type: string, format: uuid } }
  *       - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -168,7 +168,7 @@ variantsRoutes.patch(
 variantsRoutes.delete(
   "/:id",
   sessionAuthMiddleware,
-  requirePermission("variant", "delete"),
+  requirePermission("variants", "delete"),
   validateRequest(variantIdSchema, "params"),
   variantsController.delete
 );

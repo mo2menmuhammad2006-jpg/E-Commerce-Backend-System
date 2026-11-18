@@ -3,6 +3,7 @@ import { AppError } from "../../utils/appError.js";
 import { prisma } from "../../configs/db.js";
 import { ProductStatus, UserRole, AuditActorType } from "@prisma/client";
 import { auditService } from "../audit/audit.service.js";
+import { ENTITY } from "../audit/audit.constants.js";
 
 export class ProductService {
     #prisma;
@@ -42,7 +43,7 @@ export class ProductService {
             data: { name, description, category_id }
         });
         await this.#auditService.log({
-            entity_type: "product",
+            entity_type: ENTITY.PRODUCT,
             entity_id: product.id,
             action: "create",
             performed_by_type: AuditActorType.USER,
@@ -80,7 +81,7 @@ export class ProductService {
         }
         if (Object.keys(changes).length > 0) {
             await this.#auditService.log({
-                entity_type: "product",
+                entity_type: ENTITY.PRODUCT,
                 entity_id: product.id,
                 action: "update",
                 performed_by_type: AuditActorType.USER,
@@ -104,7 +105,7 @@ export class ProductService {
             data: { status: ProductStatus.INACTIVE }
         });
         await this.#auditService.log({
-            entity_type: "product",
+            entity_type: ENTITY.PRODUCT,
             entity_id: product.id,
             action: "deactivate",
             performed_by_type: AuditActorType.USER,

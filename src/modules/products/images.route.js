@@ -41,7 +41,7 @@ imagesRoutes.get("/", optionalSessionAuthMiddleware, imagesController.get);
  *   post:
  *     tags: [Images]
  *     summary: Add images to a product (admin)
- *     description: Requires an ADMIN session (permission `images:add`). At most 10 images per product and at most one primary.
+ *     description: Requires an ADMIN session (permission `images:create`). At most 10 images per product and at most one primary.
  *     parameters:
  *       - { in: path, name: productId, required: true, schema: { type: string, format: uuid } }
  *     requestBody:
@@ -82,7 +82,7 @@ imagesRoutes.get("/", optionalSessionAuthMiddleware, imagesController.get);
 imagesRoutes.post(
   "/",
   sessionAuthMiddleware,
-  requirePermission("images", "add"),
+  requirePermission("images", "create"),
   validateRequest(addImagesSchema),
   imagesController.add
 );
@@ -184,8 +184,6 @@ imagesRoutes.patch(
   validateRequest(updateImageSchema),
   imagesController.update
 );
-
-
 
 /**
  * @openapi

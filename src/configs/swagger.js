@@ -1,6 +1,7 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { env } from './env.js'
 
 const docsDir = path.posix.join(
   path.dirname(fileURLToPath(import.meta.url)).replace(/\\/g, "/"),
@@ -17,7 +18,7 @@ const options = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.PORT || 5001}/api/v1`,
+        url: `http://localhost:${env.PORT}/api/v1`,
       },
     ],
     tags: [

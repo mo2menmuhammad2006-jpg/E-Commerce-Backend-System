@@ -4,10 +4,10 @@ const ROLES = {
   ADMIN: {
     audit_logs:{ read:"all"},
     store_settings:{ read:"all", write:"all"},
-    product:{create:"all",update:"all",delete:"all"},
-    variant:{create:"all",update:"all",delete:"all"},
+    products:{create:"own",update:"all",delete:"all"},
+    variants:{create:"own",update:"all",delete:"all"},
     price_logs:{read:"all"},
-    images:{add:"all",update:"all",delete:"all"}
+    images:{create:"own",update:"all",delete:"all"}
   },
   CUSTOMER: {},
 };
@@ -20,6 +20,5 @@ export const requirePermission = (resource, action) => (req,res,next) => {
     }
     const scope = ROLES[userRole]?.[resource]?.[action];
     if(!scope) return next(new AppError(403, "forbidden"));
-    req.permissionScope = scope;
     next();
 };
