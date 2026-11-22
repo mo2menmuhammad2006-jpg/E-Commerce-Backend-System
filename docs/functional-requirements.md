@@ -71,15 +71,13 @@ FR-010: Create Category
 
 FR-011: Update Category
 - System shall allow updating of category name and description
-- System shall allow reassignment of parent category
-- Reassignment shall not create circular references
-- Reassignment shall not exceed maximum nesting depth
+- Category name must be unique within the same parent level
 
 FR-012: Delete Category
 - System shall support deletion of categories only if:
   - Category has no direct products assigned
   - Category has no subcategories
-- Deletion shall require confirmation when category has descendants
+
 
 FR-013: Get Category Tree
 - System shall return complete category hierarchy as a tree structure

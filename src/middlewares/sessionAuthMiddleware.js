@@ -12,6 +12,7 @@ const createSessionAuth =(softAuthn=false)=>async (req, res, next) => {
     });
     
     if(!user){
+        if(softAuthn) return next();
         return next(new AppError(401, "user no longer exists","UNAUTHORIZED"));
     }
     req.user = user;

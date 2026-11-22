@@ -28,6 +28,7 @@ const options = {
       { name: "Images" },
       { name: "Audit Logs" },
       { name: "Settings" },
+      { name: "Categories" },
     ],
     components: {
       schemas: {
@@ -59,6 +60,30 @@ const options = {
             id: { type: "string", format: "uuid" },
             name: { type: "string", example: "Electronics" },
           },
+        },
+        CategoryNode: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            name: { type: "string", example: "Phones" },
+            description: { type: "string", example: "Mobile phones" },
+            parent_id: { type: "string", format: "uuid", nullable: true },
+            _count: {
+              type: "object",
+              properties: {
+                children: { type: "integer", example: 2 },
+                products: { type: "integer", example: 5 },
+              },
+            },
+            children: {
+              type: "array",
+              items: { $ref: "#/components/schemas/CategoryNode" },
+            },
+          },
+        },
+        CategoryTree: {
+          type: "array",
+          items: { $ref: "#/components/schemas/CategoryNode" },
         },
         Product: {
           type: "object",
@@ -264,6 +289,10 @@ const options = {
         },
       },
       responses: {
+        BadRequest: {
+          description: "validation error",
+          content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
+        },
         Unauthorized: {
           description: "missing or invalid session",
           content: { "application/json": { schema: { $ref: "#/components/schemas/Error" } } },
