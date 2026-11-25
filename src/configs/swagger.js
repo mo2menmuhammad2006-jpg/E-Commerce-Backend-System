@@ -29,6 +29,7 @@ const options = {
       { name: "Audit Logs" },
       { name: "Settings" },
       { name: "Categories" },
+      { name: "Inventory" },
     ],
     components: {
       schemas: {
@@ -113,6 +114,18 @@ const options = {
           properties: {
             total_quantity: { type: "integer", example: 25 },
             low_stock_threshold: { type: "integer", example: 5 },
+          },
+        },
+        InventoryLog: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            inventory_id: { type: "string", format: "uuid" },
+            operation_type: { type: "string", enum: ["SET", "INCREMENT", "DECREMENT"] },
+            previous_quantity: { type: "integer" },
+            new_quantity: { type: "integer" },
+            reason: { type: "string" },
+            created_at: { type: "string", format: "date-time" },
           },
         },
         ProductVariant: {

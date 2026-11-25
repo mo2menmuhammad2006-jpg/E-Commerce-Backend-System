@@ -39,6 +39,7 @@ FR-005: List Products
 
 FR-006: Create Variant
 - System shall allow creation of variants under a parent product with the following mandatory attributes: SKU, price, and attributes (e.g., size, color)
+- System shall allow setting inventory details like quantity and threshold
 - SKU must be unique across all variants in the system
 - Price must be a positive decimal value with maximum 2 decimal places
 - Variant attributes shall be stored as structured data (e.g., JSON)
@@ -47,6 +48,7 @@ FR-006: Create Variant
 
 FR-007: Update Variant
 - System shall allow updating of variant attributes: price and attributes
+- System shall allow activation of variant
 - SKU shall not be modifiable after creation
 - Price changes shall not affect existing orders
 - System shall record the timestamp of last modification
@@ -117,19 +119,15 @@ FR-019: Update Inventory
 - System shall log all inventory changes with: timestamp, previous quantity, new quantity, and reason
 - System shall support setting low stock threshold per variant
 
-FR-020: Get Inventory Status
-- System shall return current stock quantity for a variant
-- System shall indicate if stock is below configured threshold
-- System shall return stock status: "In Stock", "Low Stock", or "Out of Stock"
 
 ### 2.6 Shopping Cart
 
-FR-021: Create Cart
+FR-020: Create Cart
 - System shall create a new cart for each unique session/customer
 - Cart shall be identified by a unique cart identifier
 - New cart shall be empty upon creation
 
-FR-022: Add Item to Cart
+FR-021: Add Item to Cart
 - System shall add specified quantity of a variant to cart
 - If variant already exists in cart, quantities shall be summed
 - System shall validate:
@@ -138,29 +136,29 @@ FR-022: Add Item to Cart
   - Requested quantity does not exceed available stock
 - System shall store variant price at time of adding
 
-FR-023: Update Cart Item Quantity
+FR-022: Update Cart Item Quantity
 - System shall allow modification of item quantity in cart
 - System shall validate new quantity against available stock
 - Quantity of zero shall remove item from cart
 
-FR-024: Remove Item from Cart
+FR-023: Remove Item from Cart
 - System shall support removal of individual items from cart
 - System shall support clearing entire cart
 
-FR-025: Get Cart Details
+FR-024: Get Cart Details
 - System shall return all items in cart with: product details, quantity, unit price, and line total
 - System shall calculate and return cart subtotal
 - System shall indicate if any items are no longer available or have price changes
 - System shall calculate estimated total items count
 
-FR-026: Validate Cart
+FR-025: Validate Cart
 - System shall validate all cart items against current inventory and pricing
 - System shall identify: out-of-stock items, quantity exceedances, and price changes
 - System shall return validation results without modifying cart
 
 ### 2.7 Order Management
 
-FR-027: Place Order
+FR-026: Place Order
 - System shall create order from validated cart contents
 - Order shall include: order number (unique, human-readable), timestamp, items, quantities, prices, and calculated totals
 - Order shall capture: customer name, shipping address, and contact information
@@ -169,7 +167,7 @@ FR-027: Place Order
 - Inventory shall be deducted atomically during order placement
 - System shall clear cart upon successful order creation
 
-FR-028: Update Order Status
+FR-027: Update Order Status
 - System shall support order status transitions:
   - Pending → Confirmed → Processing → Shipped → Delivered
   - Pending → Cancelled
@@ -177,24 +175,24 @@ FR-028: Update Order Status
 - Cancelled orders shall restore deducted inventory
 - System shall record timestamp and reason for each status change
 
-FR-029: Get Order Details
+FR-028: Get Order Details
 - System shall return complete order information: order number, status, items, quantities, prices, totals, shipping address, and status history
 - System shall include current product names and images for display
 
-FR-030: List Orders
+FR-029: List Orders
 - System shall support paginated retrieval of orders
 - System shall support filtering by: status, date range
 - System shall support sorting by: order date, total amount
 - Default sort shall be by order date (newest first)
 
-FR-031: Cancel Order
+FR-030: Cancel Order
 - System shall allow cancellation only for orders in "Pending" or "Confirmed" status
 - Orders in "Processing" or later statuses cannot be cancelled
 - Cancellation shall restore the deducted inventory
 - System shall record cancellation reason
 - System shall generate cancellation timestamp
 
-FR-032: Calculate Order Totals
+FR-031: Calculate Order Totals
 - System shall calculate subtotal as sum of (quantity × unit price) for all items
 - System shall apply shipping rules:
   - Free shipping for orders above configurable threshold

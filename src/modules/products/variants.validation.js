@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MAX_PAGE_SIZE } from "../../utils/pagination.js";
+import { initialInventorySchema } from "../inventory/inventory.validation.js";
 
 const priceSchema = z
   .number()
@@ -31,15 +32,15 @@ export const createVariantSchema = z.object({
   sku: z.string().trim().min(1, "sku is required").max(50, "sku is too long"),
   price: priceSchema,
   attributes: attributesSchema,
-  total_quantity: z.number().int().nonnegative("total quantity must be a non-negative integer"),
-  low_stock_threshold: z.number().int().nonnegative("low stock threshold must be a non-negative integer").default(0),
-  reason: z.string().trim().min(1, "reason is required").max(255, "reason is too long").optional(),
+  ...initialInventorySchema.shape,
+  is_active: z.boolean().default(true),
 });
 
 export const updateVariantSchema = z
   .object({
     price: priceSchema.optional(),
     attributes: attributesSchema.optional(),
+    is_active: z.literal(true, { error: "use DELETE to deactivate a variant" }).optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     message: "at least one field must be provided",

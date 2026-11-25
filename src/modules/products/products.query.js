@@ -17,11 +17,11 @@ export class ProductQuery {
     created_at: true,
     images: {
       where: { is_primary: true },
-      select: { url: true, alt_text: true },
+      select: { id:true,url: true, alt_text: true },
     },
     variants: {
       where: { is_active: true },
-      select: { price: true },
+      select: { id:true },
       orderBy: { price: "asc" },
     },
   };
@@ -125,13 +125,14 @@ export class ProductQuery {
           variants: {
             where: variantsCondition,
             orderBy: { price: "asc" },
-            include: {
-              inventory: { select: { total_quantity: true, low_stock_threshold: true } },
+            select: {
+              id:true,price:true,attributes:true,
+              inventory: { select: { id:true,total_quantity: true} },
             },
           },
           reviews: {
             where: { status: "APPROVED" },
-            select: { rating: true, title: true, body: true, created_at: true },
+            select: { id:true,rating: true, title: true, body: true, created_at: true },
             orderBy: { created_at: "desc" },
           },
         },

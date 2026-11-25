@@ -16,17 +16,17 @@ export class VariantsController {
   };
 
   create = async (req, res, next) => {
-    const variant = await this.#variantService.createVariant({ productId: req.params.productId, ...req.body }, req.user.id);
+    const variant = await this.#variantService.createVariant({ productId: req.params.productId, ...req.body, performedBy: req.user.id });
     return created(res, variant, "variant created successfully");
   };
 
   update = async (req, res, next) => {
-    const { updatedVariant } = await this.#variantService.updateVariant({ productId: req.params.productId, variantId: req.params.id, ...req.body }, req.user.id);
+    const { updatedVariant } = await this.#variantService.updateVariant({ productId: req.params.productId, variantId: req.params.id, ...req.body, performedBy: req.user.id });
     return ok(res, updatedVariant, "variant is updated successfully");
   };
 
   delete = async (req, res, next) => {
-    const { variant } = await this.#variantService.deleteVariant(req.params.productId, req.params.id, req.user.id);
+    const { variant } = await this.#variantService.deleteVariant({ productId: req.params.productId, variantId: req.params.id, performedBy: req.user.id });
     return ok(res, variant, "variant deactivated successfully");
   };
 

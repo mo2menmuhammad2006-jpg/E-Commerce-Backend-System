@@ -8,9 +8,9 @@ export class AuditService {
     this.#prisma = prismaClient;
   }
 
-  async log(input) {
+  async log(input, tx) {
     const data = logAuditSchema.parse(input);
-    return this.#prisma.auditLog.create({ data });
+    return (tx ?? this.#prisma).auditLog.create({ data });
   }
 
   async list({ filters = {}, skip, take }) {

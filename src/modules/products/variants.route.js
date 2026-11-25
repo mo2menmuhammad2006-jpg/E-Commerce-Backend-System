@@ -39,6 +39,7 @@ export const variantsRoutes = Router({ mergeParams: true });
  *               total_quantity: { type: integer, minimum: 0, example: 25 }
  *               low_stock_threshold: { type: integer, minimum: 0, default: 0, example: 5 }
  *               reason: { type: string, minLength: 1, maxLength: 255, description: "optional inventory log reason" }
+ *               is_active: { type: boolean, default: true, example: true }
  *     responses:
  *       201:
  *         description: variant created
@@ -97,7 +98,7 @@ variantsRoutes.get(
  *   patch:
  *     tags: [Variants]
  *     summary: Update a variant (admin)
- *     description: Requires an ADMIN session (permission `variants:update`). A price change is recorded in a price log.
+ *     description: "Requires an ADMIN session (permission `variants:update`). A price change is recorded in a price log. Pass is_active=true to activate an inactive variant. Deactivation is handled by DELETE."
  *     parameters:
  *       - { in: path, name: productId, required: true, schema: { type: string, format: uuid } }
  *       - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
@@ -115,6 +116,7 @@ variantsRoutes.get(
  *                 additionalProperties: true
  *                 minProperties: 1
  *                 example: { color: "white", size: "L" }
+ *               is_active: { type: boolean, enum: [true], description: "activates an inactive variant", example: true }
  *     responses:
  *       200:
  *         description: variant updated
@@ -126,6 +128,7 @@ variantsRoutes.get(
  *                 success: { type: boolean, example: true }
  *                 message: { type: string, example: "variant is updated successfully" }
  *                 data: { $ref: "#/components/schemas/ProductVariant" }
+ *       400: { $ref: "#/components/responses/BadRequest" }
  *       401: { $ref: "#/components/responses/Unauthorized" }
  *       403: { $ref: "#/components/responses/Forbidden" }
  *       404: { $ref: "#/components/responses/NotFound" }

@@ -8,7 +8,9 @@ const ROLES = {
     variants:{create:"own",update:"all",delete:"all"},
     price_logs:{read:"all"},
     images:{create:"own",update:"all",delete:"all"},
-    categories:{create:"own",update:"all",delete:"all"}
+    categories:{create:"own",update:"all",delete:"all"},
+    inventory: {create:"own", update:"all"},
+    inventory_logs:{read:"all"}
   },
   CUSTOMER: {},
 };

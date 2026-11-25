@@ -8,6 +8,7 @@ import { authRoutes } from "./modules/auth/auth.route.js";
 import { auditRoutes } from "./modules/audit/audit.route.js";
 import { settingsRoutes } from "./modules/settings/settings.route.js";
 import { categoriesRoutes } from "./modules/category/category.route.js";
+import { inventoryRoutes } from "./modules/inventory/inventory.route.js";
 import { sessionSetupMiddleware } from "./middlewares/sessionSetupMiddleware.js";
 import { productsRoutes } from "./modules/products/products.route.js";
 import { apiLimiter } from "./configs/ratelimiters.js";
@@ -42,6 +43,7 @@ app.use("/api/v1/auth",authRoutes);
 app.use("/api/v1/audit-logs",auditRoutes);
 app.use("/api/v1/settings",settingsRoutes);
 app.use("/api/v1/categories",categoriesRoutes);
+app.use("/api/v1/inventory",inventoryRoutes);
 app.use("/api/v1/products",productsRoutes);
 
 if(env.NODE_ENV==="development"){
