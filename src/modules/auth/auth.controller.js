@@ -1,12 +1,15 @@
 import { authService } from "./auth.service.js";
+import { cartService } from "../cart/cart.service.js";
 import { ok, created } from "../../utils/responseHelper.js";
 import { SESSION_COOKIE_OPTIONS, SESSION_COOKIE_NAME } from "../../middlewares/sessionSetupMiddleware.js";
 
 export class AuthController {
   #authService;
+  #cartService;
 
-  constructor({ authService: service = authService } = {}) {
+  constructor({ authService: service = authService, cartService: cart = cartService } = {}) {
     this.#authService = service;
+    this.#cartService = cart;
   }
 
   static #regenerateSession(req) {
@@ -19,7 +22,11 @@ export class AuthController {
   }
 
   register = async (req, res, next) => {
+    const guestSessionId = req.session?.cartSessionId;
     const user = await this.#authService.register(req.body);
+    if (guestSessionId) {
+      await this.#cartService.mergeGuestCart({ guestSessionId, userId: user.id });
+    }
 
     await AuthController.#regenerateSession(req);
     req.session.userId = user.id;
@@ -28,7 +35,11 @@ export class AuthController {
   };
 
   login = async (req, res, next) => {
+    const guestSessionId = req.session?.cartSessionId;
     const user = await this.#authService.login(req.body);
+    if (guestSessionId) {
+      await this.#cartService.mergeGuestCart({ guestSessionId, userId: user.id });
+    }
 
     await AuthController.#regenerateSession(req);
     req.session.userId = user.id;

@@ -30,6 +30,7 @@ const options = {
       { name: "Settings" },
       { name: "Categories" },
       { name: "Inventory" },
+      { name: "Cart" },
     ],
     components: {
       schemas: {
@@ -126,6 +127,45 @@ const options = {
             new_quantity: { type: "integer" },
             reason: { type: "string" },
             created_at: { type: "string", format: "date-time" },
+          },
+        },
+        CartIssues: {
+          type: "object",
+          properties: {
+            unavailable: { type: "string", example: "variant is no longer available" },
+            underStock: { type: "string", example: "available quantity is 5" },
+            priceChanged: { type: "string", example: "price changed to 24.99" },
+          },
+        },
+        CartItem: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            variant_id: { type: "string", format: "uuid" },
+            quantity: { type: "integer", example: 2 },
+            unit_price: { type: "string", example: "19.99" },
+            line_total: { type: "string", example: "39.98" },
+            sku: { type: "string", nullable: true },
+            product: {
+              type: "object",
+              nullable: true,
+              properties: {
+                id: { type: "string", format: "uuid" },
+                name: { type: "string" },
+                status: { type: "string", enum: ["DRAFT", "ACTIVE", "INACTIVE"] },
+              },
+            },
+            issues: { $ref: "#/components/schemas/CartIssues" },
+          },
+        },
+        Cart: {
+          type: "object",
+          properties: {
+            cartId: { type: "string", format: "uuid", nullable: true },
+            items: { type: "array", items: { $ref: "#/components/schemas/CartItem" } },
+            subtotal: { type: "string", example: "39.98" },
+            total_items: { type: "integer", example: 2 },
+            has_issues: { type: "boolean", example: false },
           },
         },
         ProductVariant: {

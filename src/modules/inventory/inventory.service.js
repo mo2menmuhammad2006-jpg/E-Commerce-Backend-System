@@ -2,8 +2,7 @@ import { InventoryOperation } from "@prisma/client";
 import { prisma } from "../../configs/db.js";
 import { AppError } from "../../utils/appError.js";
 import {
-  initialInventorySchema,
-  updateInventorySchema,
+  initialInventorySchema
 } from "./inventory.validation.js";
 
 export class InventoryService {

@@ -125,7 +125,6 @@ FR-019: Update Inventory
 FR-020: Create Cart
 - System shall create a new cart for each unique session/customer
 - Cart shall be identified by a unique cart identifier
-- New cart shall be empty upon creation
 
 FR-021: Add Item to Cart
 - System shall add specified quantity of a variant to cart
