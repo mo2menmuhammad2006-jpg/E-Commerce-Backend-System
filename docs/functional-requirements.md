@@ -1,6 +1,6 @@
 # Functional Requirements
 E-Commerce Backend System
-Version 0.3.0
+Version 0.4.0
 
 ## 2. Functional Requirements
 
